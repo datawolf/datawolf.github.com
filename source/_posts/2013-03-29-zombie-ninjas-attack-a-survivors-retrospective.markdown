@@ -19,6 +19,7 @@ code test
 ``` c 世界, 你好!  http://wiki.l-cloud.org/  源代码
 
 #include <stdio.h>
+#define SIZE    5
 
 int main(int argc, char** argv)
 {
