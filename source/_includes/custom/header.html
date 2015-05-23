@@ -1,6 +1,18 @@
+<div style="
+    height: 6px;
+    position: fixed;
+    background: #a2cbfa;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 3;
+"></div>
 <hgroup>
   <h1><a href="{{ root_url }}/">{{ site.title }}</a></h1>
   {% if site.subtitle %}
     <h2>{{ site.subtitle }}</h2>
+  {% endif %}
+  {% if site.logo %}
+  <p class="profile"><a href="{{ root_url }}/"><img src="{{ root_url }}/images/{{ site.logo}}"></a></p>
   {% endif %}
 </hgroup>

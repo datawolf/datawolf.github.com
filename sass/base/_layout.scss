@@ -1,4 +1,4 @@
-$max-width: 1200px !default;
+$max-width: 100% !default;
 
 // Padding used for layout margins
 $pad-min: 18px !default;
@@ -7,10 +7,10 @@ $pad-medium: 35px !default;
 $pad-wide: 55px !default;
 
 // Sidebar widths used in media queries
-$sidebar-width-medium: 240px !default;
-$sidebar-pad-medium: 15px !default;
-$sidebar-pad-wide: 20px !default;
-$sidebar-width-wide: 300px !default;
+$sidebar-width-medium: 0px !default;
+$sidebar-pad-medium: 0px !default;
+$sidebar-pad-wide: 0px !default;
+$sidebar-width-wide: 0px !default;
 
 $indented-lists: false !default;
 
@@ -84,8 +84,14 @@ body {
   }
   > header {
     font-size: $header-font-size;
+    text-align: center;
     padding-top: $header-padding-top;
     padding-bottom: $header-padding-bottom;
+	.profile img{
+		width:148px;
+		border-radius:74px;
+		margin-top:1em;
+	}
   }
 }
 
