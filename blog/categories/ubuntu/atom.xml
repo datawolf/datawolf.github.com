@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ubuntu | Linux Primer]]></title>
+  <link href="http://datawolf.github.com/blog/categories/ubuntu/atom.xml" rel="self"/>
+  <link href="http://datawolf.github.com/"/>
+  <updated>2015-06-14T17:24:30+08:00</updated>
+  <id>http://datawolf.github.com/</id>
+  <author>
+    <name><![CDATA[datawolf]]></name>
+    <email><![CDATA[datawolf@laoqinren.net]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[which 命令分析]]></title>
+    <link href="http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi/"/>
+    <updated>2013-04-14T17:03:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi</id>
+    <content type="html"><![CDATA[<h2>环境</h2>
+
+<p>Linux 3.2.0-40-generic #64-Ubuntu SMP Mon Mar 25 21:22:10 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux</p>
+
+<h3>which 命令的位置</h3>
+
+<p><code>bash
+datawolf@datawolf-ThinkPad-Edge:~$ which -a which
+/usr/bin/which
+/bin/which
+</code></p>
+
+<h3>分析两个which文件的类型</h3>
+
+<p>通过以下shell命令可以看出，<code>/usr/bin/which</code>是一个指向<code>/bin/which</code>的符号链接。而<code>/bin/which</code>是一个shell脚本。
+<code>bash
+datawolf@datawolf-ThinkPad-Edge:~$ ls -al  /usr/bin/which /bin/which
+-rwxr-xr-x 1 root root 946 Mar 30  2012 /bin/which
+lrwxrwxrwx 1 root root  10 Feb 21 16:23 /usr/bin/which -&gt; /bin/which
+datawolf@datawolf-ThinkPad-Edge:~$ file /usr/bin/which
+/usr/bin/which: symbolic link to `/bin/which'
+datawolf@datawolf-ThinkPad-Edge:~$ file /bin/which
+/bin/which: POSIX shell script, ASCII text executable
+</code></p>
+
+<!-- more -->
+
+
+<h3>/bin/which 文件分析</h3>
+
+<p><strong>which</strong>命令的原理：该命令在系统<code>$PATH</code>环境变量指向的目录中，寻找是否有指定的可执行的命令。
+其用发如下：
+<code>bash
+$ which -a ping # 寻找所有的ping命令在系统中的路径位置
+$ which ping # 寻找第一个ping命令在系统中的路径位置
+</code>
+<strong>which</strong>命令的源代码如下：
+``` bash</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>-e 如果命令带非0返回值，立即退出</h1>
+
+<h1>-f 禁止带扩展名的路径</h1>
+
+<p>set -ef</p>
+
+<h1>$KSH_VERSION变量表示ksh的版本</h1>
+
+<p>if test -n "$KSH_VERSION"; then</p>
+
+<pre><code>puts() {
+    print -r -- "$*"
+}
+</code></pre>
+
+<p>else</p>
+
+<pre><code>puts() {
+    printf '%s\n' "$*"
+}
+</code></pre>
+
+<p>fi</p>
+
+<p>ALLMATCHES=0</p>
+
+<h1>查找是否有选项-a</h1>
+
+<h1>如果有选项-a，打印所有匹配的命令，否则打印第一个匹配的命令</h1>
+
+<p>while getopts a whichopts
+do</p>
+
+<pre><code>    case "$whichopts" in
+            a) ALLMATCHES=1 ;;
+            ?) puts "Usage: $0 [-a] args"; exit 2 ;;
+    esac
+</code></pre>
+
+<p>done</p>
+
+<h1>shift n 表示将原来的位置参数左移n位。</h1>
+
+<h1>$OPTIND 代表下一个待处理的参数的索引</h1>
+
+<p>shift $(($OPTIND - 1))</p>
+
+<h1>$#标表示参数的个数</h1>
+
+<p>if [ "$#" -eq 0 ]; then
+ ALLRET=1
+else
+ ALLRET=0
+fi
+case $PATH in</p>
+
+<pre><code>(*[!:]:) PATH="$PATH:" ;;
+</code></pre>
+
+<p>esac</p>
+
+<h1>$@代表输入的所有的命令行参数</h1>
+
+<h1>$IFS表示bash内部的域分割符。默认值为空格</h1>
+
+<h1>[-f "filename"] 判断是否是一个文件</h1>
+
+<h1>[-x "filename"] 判断文件是否具有可执行权限</h1>
+
+<h1>[-z "str"] 判断字符串长度是否为0</h1>
+
+<p>#</p>
+
+<p>for PROGRAM in "$@"; do
+ RET=1
+ IFS_SAVE="$IFS"
+ IFS=:</p>
+
+<h1>该程序首先判断具有全部路径的命令是否存在，比如这样使用： which /usr/bin/ls</h1>
+
+<h1>如果当使用如下时： which ls 该程序将在系统$PATH的路径下寻找相应的程序。</h1>
+
+<p> case $PROGRAM in
+  <em>/</em>)
+   if [ -f "$PROGRAM" ] &amp;&amp; [ -x "$PROGRAM" ]; then</p>
+
+<pre><code>puts "$PROGRAM"
+RET=0
+</code></pre>
+
+<p>   fi
+   ;;
+  *)
+   for ELEMENT in $PATH; do</p>
+
+<pre><code>if [ -z "$ELEMENT" ]; then
+ ELEMENT=.
+fi
+if [ -f "$ELEMENT/$PROGRAM" ] &amp;&amp; [ -x "$ELEMENT/$PROGRAM" ]; then
+ puts "$ELEMENT/$PROGRAM"
+ RET=0
+ [ "$ALLMATCHES" -eq 1 ] || break
+fi
+</code></pre>
+
+<p>   done
+   ;;
+ esac
+ IFS="$IFS_SAVE"
+ if [ "$RET" -ne 0 ]; then
+  ALLRET=1
+ fi
+done</p>
+
+<p>exit "$ALLRET"</p>
+
+<p>```</p>
+
+<h3>CentOS 中的which命令</h3>
+
+<h4>环境</h4>
+
+<p>Linux 2.6.32-220.17.1.el6.x86_64 #1 SMP Wed May 16 00:01:37 BST 2012 x86_64 x86_64 x86_64 GNU/Linux</p>
+
+<p>which - shows the full path of (shell) commands</p>
+
+<p>Which takes one or more arguments. For each of its arguments it prints to stdout the full path of the executables that would have been executed when this argument had been entered at the shell prompt. It does this by searching for an executable or script in the directories listed in the environment variable PATH using the same algorithm as bash(1)</p>
+
+<h4>在CentOS下，which是c语言写的</h4>
+
+<p>``` bash
+[wanglong@wanglong ~]$ which -a which
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'</p>
+
+<pre><code>/usr/bin/which
+</code></pre>
+
+<p>/usr/bin/which
+[wanglong@wanglong ~]$ file /usr/bin/which
+/usr/bin/which: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.18, stripped
+[wanglong@wanglong ~]$ ldd /usr/bin/which</p>
+
+<pre><code>linux-vdso.so.1 =&gt;  (0x00007fff74fff000)
+libc.so.6 =&gt; /lib64/libc.so.6 (0x0000003250400000)
+/lib64/ld-linux-x86-64.so.2 (0x0000003250000000)
+</code></pre>
+
+<p>[wanglong@wanglong ~]$
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ubuntu下安装eclipse的Could not load SWT library问题]]></title>
+    <link href="http://datawolf.github.com/blog/2013/04/04/ubuntuxia-an-zhuang-eclipsede-could-not-load-swt-librarywen-ti/"/>
+    <updated>2013-04-04T15:16:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2013/04/04/ubuntuxia-an-zhuang-eclipsede-could-not-load-swt-librarywen-ti</id>
+    <content type="html"><![CDATA[<h2>Description</h2>
+
+<p>版本：Ubuntu 12.04, Eclipse3.7.2-1, Oracle Java 1.6</p>
+
+<p><code>sh
+$ sudo apt-get install eclipse
+</code></p>
+
+<h2>Question</h2>
+
+<p>安装后打开eclipse，提示出错
+<code>plain
+An error has occurred. See the log file /home/datawolf/.eclipse/org.eclipse.platform_3.7.0_155965261/configuration/1365058671830.log.
+</code>
+打开log文件，看到下面的错误
+``` plain
+!SESSION 2013-04-04 14:57:51.666 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_37
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64</p>
+
+<p>!ENTRY org.eclipse.osgi 4 0 2013-04-04 14:57:53.033
+!MESSAGE Application error
+!STACK 1
+java.lang.UnsatisfiedLinkError: Could not load SWT library. Reasons:</p>
+
+<pre><code>no swt-gtk-3740 in java.library.path
+no swt-gtk in java.library.path
+Can't load library: /home/datawolf/.swt/lib/linux/x86_64/libswt-gtk-3740.so
+Can't load library: /home/datawolf/.swt/lib/linux/x86_64/libswt-gtk.so
+
+at org.eclipse.swt.internal.Library.loadLibrary(Library.java:285)
+at org.eclipse.swt.internal.Library.loadLibrary(Library.java:194)
+at org.eclipse.swt.internal.C.&lt;clinit&gt;(C.java:21)
+at org.eclipse.swt.internal.Converter.wcsToMbcs(Converter.java:63)
+at org.eclipse.swt.internal.Converter.wcsToMbcs(Converter.java:54)
+at org.eclipse.swt.widgets.Display.&lt;clinit&gt;(Display.java:132)
+at org.eclipse.ui.internal.Workbench.createDisplay(Workbench.java:695)
+at org.eclipse.ui.PlatformUI.createDisplay(PlatformUI.java:161)
+at org.eclipse.ui.internal.ide.application.IDEApplication.createDisplay(IDEApplication.java:153)
+at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:95)
+at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at java.lang.reflect.Method.invoke(Method.java:597)
+at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+</code></pre>
+
+<p>```</p>
+
+<h2>Solution</h2>
+
+<p>把相关文件拷贝到<code>~/.swt/lib/linux/x86_64</code>下即可</p>
+
+<p><code>sh
+$ cp /usr/lib/jni/libswt-*3740.so ~/.swt/lib/linux/x86_64
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to install sun jdk 6 on ubuntu linux]]></title>
+    <link href="http://datawolf.github.com/blog/2013/04/03/how-to-install-sun-jdk-6-on-ubuntu-linux/"/>
+    <updated>2013-04-03T17:12:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2013/04/03/how-to-install-sun-jdk-6-on-ubuntu-linux</id>
+    <content type="html"><![CDATA[<h2>下载相应的版本</h2>
+
+<p><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk6u37-downloads-1859587.html">下载地址</a>下载相应的版本，32位就x86，64位就x64，我下载的是jdk-6u37-linux-x64.bin；</p>
+
+<h2>安装</h2>
+
+<p>1、创建安装目录
+<code>sh
+$ sudo mkdir /usr/java
+$ cd /usr/java/
+</code>
+2、拷贝下载好的jdk到安装目录
+<code>sh
+$ sudo mv ~/jdk-6u37-linux-x64.bin ./
+</code>
+3、安装
+<code>sh
+$ sudo ./jdk-6u37-linux-x64.bin
+</code>
+安装完后，会在<code>/usr/java</code>目录下多出一个<code>jdk_1.6.0_37</code>的目录。</p>
+
+<h2>配置</h2>
+
+<p>1、配置环境变量</p>
+
+<p>编辑<code>/etc/bashrc</code>，添加如下内容
+<code>plain
+JAVA_HOME=/usr/java/jdk1.6.0_37
+PATH=$PATH:$JAVA_HOME/bin
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$CLASSPATH
+export JAVA_HOME PATH CLASSPATH
+</code>
+2、使环境变量生效
+<code>sh
+$ source /etc/bashrc
+</code>
+3、替换ubuntu默认的jdk
+``` sh
+$ sudo update-alternatives --install /usr/bin/java  java  /usr/java/jdk1.6.0_37/bin/java 999
+$ sudo update-alternatives --install /usr/bin/javac  javac  /usr/java/jdk1.6.0_37/bin/javac 999
+$ sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/java/jdk1.6.0_37/bin/javadoc 999</p>
+
+<h1>以下三个命令会让你选择，选择刚安装好的版本就行了</h1>
+
+<p>$ sudo update-alternatives --config java
+$ sudo update-alternatives --config javac
+$ sudo update-alternatives --config javadoc
+<code>
+4、检查一下，是否正确
+</code> sh
+$ ls -lh /etc/alternatives/java*
+<code>
+结果如下：
+</code> plain
+lrwxrwxrwx 1 root root 30 Apr  3 17:27 /etc/alternatives/java -> /usr/java/jdk1.6.0_37/bin/java
+lrwxrwxrwx 1 root root 31 Apr  3 17:28 /etc/alternatives/javac -> /usr/java/jdk1.6.0_37/bin/javac
+lrwxrwxrwx 1 root root 33 Apr  3 17:28 /etc/alternatives/javadoc -> /usr/java/jdk1.6.0_37/bin/javadoc
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

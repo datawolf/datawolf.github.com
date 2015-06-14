@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: website | Linux Primer]]></title>
+  <link href="http://datawolf.github.com/blog/categories/website/atom.xml" rel="self"/>
+  <link href="http://datawolf.github.com/"/>
+  <updated>2015-06-14T17:24:30+08:00</updated>
+  <id>http://datawolf.github.com/</id>
+  <author>
+    <name><![CDATA[datawolf]]></name>
+    <email><![CDATA[datawolf@laoqinren.net]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[自动备份网站和数据库的shell脚本]]></title>
+    <link href="http://datawolf.github.com/blog/2013/04/06/zi-dong-bei-fen-wang-zhan-he-shu-ju-ku-de-shelljiao-ben/"/>
+    <updated>2013-04-06T16:05:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2013/04/06/zi-dong-bei-fen-wang-zhan-he-shu-ju-ku-de-shelljiao-ben</id>
+    <content type="html"><![CDATA[<h2>备份网站内容</h2>
+
+<p>我的网站是用xampp集成环境搭建的。为了方便迁移和备份数据。使用如下脚本对我网站内容进行备份。其中，<code>BACKUPDIR</code>指定备份文件的存储位置。
+每一次备份的文件都用备份时系统的时间来进行唯一的命名，获取实际使用命令<code>date -I</code>。
+``` sh</p>
+
+<h1>!/bin/bash</h1>
+
+<h1>where to store the backup file</h1>
+
+<p>BACKUPDIR="/home/wanglong"</p>
+
+<p>DATE=<code>date -I</code>
+[ ! -d $BACKUPDIR ] &amp;&amp; mkdir -p $BACKUPDIR
+cd /opt/lampp
+tar  zcf $BACKUPDIR/htdocs.$DATE.tar.gz htdocs
+```</p>
+
+<h2>备份mysql数据库</h2>
+
+<p>备份数据库前，需要指定一下shell变量，包括mysql数据库的用户名、密码、运行数据库的主机和数据库相关命令的位置。
+<code>sh
+MYUSER="user"
+MYPASS="password"
+HOST="localhost"
+BACKUPDIR="/home/wanglong"
+MYSQL="/opt/lampp/bin/mysql"
+MYSQL_DUMP="/opt/lampp/bin/mysqldump"
+</code>
+完整shell脚本如下，首先将所有的数据库作为一个整体进行备份，然后对每一个数据库分别进行了备份。
+``` sh</p>
+
+<h1>!/bin/bash</h1>
+
+<p>MYUSER="user"
+MYPASS="password"
+HOST="localhost"
+BACKUPDIR="/home/wanglong"
+MYSQL="/opt/lampp/bin/mysql"
+MYSQL_DUMP="/opt/lampp/bin/mysqldump"
+DATE=<code>date -I</code></p>
+
+<p>[ ! -d $BACKUPDIR/$DATE ] &amp;&amp; mkdir -p $BACKUPDIR/$DATE</p>
+
+<h1>backup all databases in a file</h1>
+
+<p>$MYSQL_DUMP -u$MYUSER -p$MYPASS -h$HOST  --all-databases > $BACKUPDIR/$DATE/all-databases.sql</p>
+
+<h1>backup each database in separate file</h1>
+
+<p>DBS=<code>$MYSQL -u$MYUSER -p$MYPASS -Bse "show databases"|grep -v "information_schema" | grep -v "performance_schema"|grep -v "Database"</code>
+for db_name in $DBS
+  do</p>
+
+<pre><code>$MYSQL_DUMP  -u$MYUSER -p$MYPASS -h$HOST  $db_name  &gt; $BACKUPDIR/$DATE/$db_name.sql
+</code></pre>
+
+<p>  done</p>
+
+<p>cd $BACKUPDIR
+tar zcf mysql.$DATE.tar.gz $DATE &amp;&amp; rm -rf $BACKUPDIR/$DATE
+```</p>
+
+<h2>自动执行脚本</h2>
+
+<p>计划每周自动备份一次网站和数据库，所以需要将上述脚本拷贝到目录<code>/etc/cron.weekly/</code>中。</p>
+]]></content>
+  </entry>
+  
+</feed>

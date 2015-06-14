@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Linux世界里的时间 - Linux Primer</title>
+  <meta name="author" content="datawolf">
+
+  
+  <meta name="description" content="通常，操作系统可以使用三种方法来表示系统的当前时间与日期： 简单的一种方法就是直接用一个64位的计数器来对时钟滴答进行计数。
+第二种方法就是用一个32位计数器来对秒进行计数，同时还用一个32位的辅助计数器对时钟滴答计数，直至累积到一秒为止。因为232超过136年， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://datawolf.github.com/blog/2013/05/26/linuxshi-jie-li-de-shi-jian">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linux Primer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><div style="
+    height: 6px;
+    position: fixed;
+    background: #a2cbfa;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 3;
+"></div>
+<hgroup>
+  <h1><a href="/">Linux Primer</a></h1>
+  
+    <h2>Dive into linux kernel</h2>
+  
+  
+  <p class="profile"><a href="/"><img src="/images/profile.png"></a></p>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/books">Books</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Linux世界里的时间</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-26T20:33:00+08:00" pubdate data-updated="true">May 26<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>通常，操作系统可以使用三种方法来表示系统的当前时间与日期：</p>
+
+<ol>
+<li>简单的一种方法就是直接用一个64位的计数器来对<strong>时钟滴答</strong>进行计数。</li>
+<li>第二种方法就是用一个32位计数器来对<strong>秒</strong>进行计数，同时还用一个32位的辅助计数器对时钟滴答计数，直至累积到一秒为止。因为23<sup>2超过136年，因此这种方法直至22世纪都可以让系统工作得很好。</sup></li>
+<li>第三种方法也是按<strong>时钟滴答</strong>进行计数，但是是相对于系统启动以来的滴答次数，而不是相对于某个确定的外部时刻；当读外部后备时钟（如RTC）或用户输入实际时间时，根据当前的滴答次数计算系统当前时间。</li>
+</ol>
+
+
+<h2>基本概念</h2>
+
+<p>首先，有必要明确一些Linux内核时钟驱动中的基本概念。</p>
+
+<h3>时钟周期的频率</h3>
+
+<p>时钟周期（clock cycle）的频率：<code>8253／8254 PIT</code>的本质就是对由晶体振荡器产生的
+时钟周期进行计数，<strong>晶体振荡器在1秒时间内产生的时钟脉冲个数就是时钟周期的频率</strong>。</p>
+
+<p>Linux用宏<code>CLOCK_TICK_RATE</code>来表示<code>8254 PIT</code>的输入时钟脉冲的频率,该宏定义在<code>arch/x86/include/asm/timex.h</code>头文件中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="p">.</span><span class="o">/</span><span class="n">arch</span><span class="o">/</span><span class="n">x86</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">asm</span><span class="o">/</span><span class="n">timex</span><span class="p">.</span><span class="n">h</span><span class="o">:</span><span class="mi">8</span><span class="o">:</span><span class="err">#</span><span class="n">define</span> <span class="n">CLOCK_TICK_RATE</span>  <span class="n">PIT_TICK_RATE</span>
+</span><span class='line'><span class="p">.</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">timex</span><span class="p">.</span><span class="n">h</span><span class="o">:</span><span class="mi">153</span><span class="o">:</span><span class="err">#</span><span class="n">define</span> <span class="n">PIT_TICK_RATE</span> <span class="mi">1193182ul</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>时钟滴答</h3>
+
+<p>时钟滴答（clock tick）：当PIT通道0的计数器减到0值时，它就在<code>IRQ0</code>上产生一次时钟中断，也即一次<strong>时钟滴答</strong>。PIT通道0的计数器的初始值决定了要过多少时钟周期才产生一次时钟中断，因此也就决定了一次时钟滴答的时间间隔长度。</p>
+
+<h3>时钟滴答的频率</h3>
+
+<p>时钟滴答的频率（HZ）：即<strong>1秒时间内PIT所产生的时钟滴答次数</strong>。类似地，这个值也是由PIT通道0的计数器初值决定的（反过来说，确定了时钟滴答的频率值后也就可以确定8254 PIT通道0的计数器初值）。</p>
+
+<p>Linux内核用宏<code>HZ</code>来表示时钟滴答的频率，而且在不同的平台上<code>HZ</code>有不同的定义值。对于ALPHA和IA62平台HZ的值是1024，对于SPARC、MIPS、ARM和i386等平台<code>HZ</code>的值都是100。该宏在i386平台上的定义如下:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef HZ </span>
+</span><span class='line'><span class="cp">#define HZ 100 </span>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>根据<code>HZ</code>的值，我们也可以知道一次时钟滴答的具体时间间隔应该是（1000ms／HZ）＝10ms。</p>
+
+<!-- more -->
+
+
+<h3>时钟滴答的时间间隔</h3>
+
+<p>时钟滴答的时间间隔：Linux用全局变量<code>tick</code>来表示时钟滴答的时间间隔长度，该变量定义在<code>kernel/timer.</code>c文件中，如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">long</span> <span class="n">tick</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1000000</span> <span class="o">+</span> <span class="n">HZ</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HZ</span><span class="p">;</span> <span class="cm">/* timer interrupt period */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>tick</code>变量的单位是<strong>微妙</strong>（μs），由于在不同平台上宏HZ的值会有所不同，因此方程式tick＝1000000÷HZ的结果可能会是个小数，因此将其进行四舍五入成一个整数，所以Linux将<code>tick</code>定义成（1000000＋HZ／2）／HZ，其中被除数表达式中的HZ／2的作用就是用来将<code>tick</code>值向上圆整成一个整型数。</p>
+
+<p>另外，Linux还用宏<code>TICK_SIZE</code>来作为tick变量的引用别名（alias），其定义如下（<code>arch／i386/kernel/time.c</code>）：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define TICK_SIZE tick </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h3>宏LATCH</h3>
+
+<p>宏LATCH：Linux用宏<code>LATCH</code>来定义<strong>要写到PIT通道0的计数器中的值</strong>，它表示PIT将每隔多少个时钟周期产生一次时钟中断。显然LATCH应该由下列公式计算：</p>
+
+<pre><code>LATCH＝（1秒之内的时钟周期个数）÷（1秒之内的时钟中断次数）＝（CLOCK_TICK_RATE）÷（HZ） 
+</code></pre>
+
+<p>类似地，上述公式的结果可能会是个小数，应该对其进行四舍五入。所以，Linux将<code>LATCH</code>定义为（<code>/include/linux/jiffies.h</code>）：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="p">.</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">jiffies</span><span class="p">.</span><span class="n">h</span><span class="o">:</span><span class="mi">54</span><span class="o">:</span><span class="cm">/* LATCH is used in the interval timer and ftape setup. */</span>
+</span><span class='line'><span class="p">.</span><span class="o">/</span><span class="n">include</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">jiffies</span><span class="p">.</span><span class="n">h</span><span class="o">:</span><span class="mi">55</span><span class="o">:</span><span class="err">#</span><span class="n">define</span> <span class="n">LATCH</span> <span class="p">((</span><span class="n">CLOCK_TICK_RATE</span> <span class="o">+</span> <span class="n">HZ</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HZ</span><span class="p">)</span> <span class="cm">/* For divider */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>类似地，被除数表达式中的HZ／2也是用来将<code>LATCH</code>向上圆整成一个整数。</p>
+
+<h2>时间的内核数据结构</h2>
+
+<p>作为一种UNIX类操作系统，Linux内核显然采用本文开始所述的第三种方法来表示系统的当前时间。Linux内核在表示系统当前时间时用到了三个重要的数据结构：</p>
+
+<h3>全局变量jiffies</h3>
+
+<p><strong>全局变量jiffies</strong>：这是一个32位的无符号整数，用来表示自内核上一次启动以来的时钟滴答次数。每发生一次时钟滴答，内核的时钟中断处理函数<code>timer_interrupt()</code>都要将该全局变量<code>jiffies</code>加1。</p>
+
+<p>该变量定义在<code>include/linux/jiffies.h</code>源文件中，如下所示：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="cm">/*</span>
+</span><span class='line'><span class="cm">   * The 64-bit value is not atomic - you MUST NOT read it</span>
+</span><span class='line'><span class="cm">   * without sampling the sequence number in jiffies_lock.</span>
+</span><span class='line'><span class="cm">   * get_jiffies_64() will do this for you as appropriate.</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="k">extern</span> <span class="n">u64</span> <span class="n">__jiffy_data</span> <span class="n">jiffies_64</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">extern</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="k">volatile</span> <span class="n">__jiffy_data</span> <span class="n">jiffies</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>C语言限定符<code>volatile</code>表示<code>jiffies</code>是一个易该变的变量，因此编译器将使对该变量的访问从不通过CPU内部cache来进行。</p>
+
+<p><code>__jiffy_data</code>的定义如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="cm">/* some arch&#39;s have a small-data section that can be accessed register-relative</span>
+</span><span class='line'><span class="cm">   * but that can only take up to, say, 4-byte variables. jiffies being part of</span>
+</span><span class='line'><span class="cm">   * an 8-byte variable may not be correctly accessed unless we force the issue</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="err">#</span><span class="n">define</span> <span class="n">__jiffy_data</span>  <span class="n">__attribute__</span><span class="p">((</span><span class="n">section</span><span class="p">(</span><span class="s">&quot;.data&quot;</span><span class="p">)))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h3>全局变量xtime</h3>
+
+<p><strong>全局变量xtime</strong>：它是一个<code>timeval</code>结构类型的变量，用来表示当前时间距UNIX时间基准
+1970－01－01 00：00：00的<strong>相对秒数值</strong>。结构<code>timeval</code>是Linux内核表示时间的一种格式
+（Linux内核对时间的表示有多种格式，每种格式都有不同的时间精度），其时间精度是<strong>微秒</strong>。
+该结构是内核表示时间时最常用的一种格式，它定义在头文件<code>include/uapi/linux/time.h</code>中，
+如下所示：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">struct</span> <span class="n">timeval</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">__kernel_time_t</span>    <span class="n">tv_sec</span><span class="p">;</span> <span class="cm">/* seconds */</span>
+</span><span class='line'>          <span class="n">__kernel_suseconds_t</span>    <span class="n">tv_usec</span><span class="p">;</span><span class="cm">/* microseconds */</span>
+</span><span class='line'>  <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>__kernel_time_t</code>的定义如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="n">__kernel_long_t</span> <span class="n">__kernel_time_t</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">__kernel_long_t</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>__kernel_suseconds_t</code>的定义如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef __kernel_suseconds_t</span>
+</span><span class='line'>  <span class="k">typedef</span> <span class="n">__kernel_long_t</span>         <span class="n">__kernel_suseconds_t</span><span class="p">;</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">__kernel_long_t</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中，成员<code>tv_sec</code>表示当前时间距UNIX时间基准的秒数值，而成员<code>tv_usec</code>则表示一秒之内的
+微秒值，且<code>1000000&gt;tv_usec&gt;＝0</code>。Linux内核通过<code>timeval</code>结构类型的全局变量<code>xtime</code>来维持当前时间，该变量定义在<code>kernel/timer.c</code>文件中，如下所示：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* The current time */</span>
+</span><span class='line'><span class="k">volatile</span> <span class="k">struct</span> <span class="n">timeval</span> <span class="n">xtime</span> <span class="nf">__attribute__</span> <span class="p">((</span><span class="n">aligned</span> <span class="p">(</span><span class="mi">16</span><span class="p">)));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>全局变量sys_tz</h3>
+
+<p><strong>全局变量sys_tz</strong>：它是一个<code>timezone</code>结构类型的全局变量，表示系统当前的时区信息。结构类型<code>timezone</code>定义在<code>include/uapi/linux/time.h</code>头文件中，如下所示:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="k">struct</span> <span class="n">timezone</span> <span class="p">{</span>
+</span><span class='line'>          <span class="kt">int</span>     <span class="n">tz_minuteswest</span><span class="p">;</span> <span class="cm">/* minutes west of Greenwich */</span>
+</span><span class='line'>          <span class="kt">int</span>     <span class="n">tz_dsttime</span><span class="p">;</span>     <span class="cm">/* type of dst correction */</span>
+</span><span class='line'>  <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基于上述结构，Linux在<code>kernel/time.c</code>文件中定义了全局变量<code>sys_tz</code>表示系统当前所处的时区信息，如下所示：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="cm">/*</span>
+</span><span class='line'><span class="cm">   * The timezone where the local system is located.  Used as a default by some</span>
+</span><span class='line'><span class="cm">   * programs who obtain this value by using gettimeofday.</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">timezone</span> <span class="n">sys_tz</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>`</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">datawolf</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-26T20:33:00+08:00" pubdate data-updated="true">May 26<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/clock/'>Clock</a>, <a class='category' href='/blog/categories/linux/'>Linux</a>, <a class='category' href='/blog/categories/time/'>Time</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/14/which-ming-ling-fen-xi/" title="Previous Post: which 命令分析">&laquo; which 命令分析</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/06/01/linux-shi-zhong-he-ding-shi-qi/" title="Next Post: Linux 时钟和定时器">Linux 时钟和定时器 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - datawolf -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'datawolf';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://datawolf.github.com/blog/2013/05/26/linuxshi-jie-li-de-shi-jian/';
+        var disqus_url = 'http://datawolf.github.com/blog/2013/05/26/linuxshi-jie-li-de-shi-jian/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Ubuntu下安装eclipse的Could not load SWT library问题 - Linux Primer</title>
+  <meta name="author" content="datawolf">
+
+  
+  <meta name="description" content="Description 版本：Ubuntu 12.04, Eclipse3.7.2-1, Oracle Java 1.6 1
+$ sudo apt-get install eclipse Question 安装后打开eclipse，提示出错 1
+An error has occurred. See &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://datawolf.github.com/blog/2013/04/04/ubuntuxia-an-zhuang-eclipsede-could-not-load-swt-librarywen-ti">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linux Primer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><div style="
+    height: 6px;
+    position: fixed;
+    background: #a2cbfa;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 3;
+"></div>
+<hgroup>
+  <h1><a href="/">Linux Primer</a></h1>
+  
+    <h2>Dive into linux kernel</h2>
+  
+  
+  <p class="profile"><a href="/"><img src="/images/profile.png"></a></p>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/books">Books</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Ubuntu下安装eclipse的Could Not Load SWT Library问题</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-04T15:16:00+08:00" pubdate data-updated="true">Apr 4<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Description</h2>
+
+<p>版本：Ubuntu 12.04, Eclipse3.7.2-1, Oracle Java 1.6</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo apt-get install eclipse
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Question</h2>
+
+<p>安装后打开eclipse，提示出错</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>An error has occurred. See the log file /home/datawolf/.eclipse/org.eclipse.platform_3.7.0_155965261/configuration/1365058671830.log.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打开log文件，看到下面的错误</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>!SESSION 2013-04-04 14:57:51.666 -----------------------------------------------
+</span><span class='line'>eclipse.buildId=I20110613-1736
+</span><span class='line'>java.version=1.6.0_37
+</span><span class='line'>java.vendor=Sun Microsystems Inc.
+</span><span class='line'>BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+</span><span class='line'>Command-line arguments:  -os linux -ws gtk -arch x86_64
+</span><span class='line'>
+</span><span class='line'>!ENTRY org.eclipse.osgi 4 0 2013-04-04 14:57:53.033
+</span><span class='line'>!MESSAGE Application error
+</span><span class='line'>!STACK 1
+</span><span class='line'>java.lang.UnsatisfiedLinkError: Could not load SWT library. Reasons: 
+</span><span class='line'>  no swt-gtk-3740 in java.library.path
+</span><span class='line'>  no swt-gtk in java.library.path
+</span><span class='line'>  Can't load library: /home/datawolf/.swt/lib/linux/x86_64/libswt-gtk-3740.so
+</span><span class='line'>  Can't load library: /home/datawolf/.swt/lib/linux/x86_64/libswt-gtk.so
+</span><span class='line'>
+</span><span class='line'>  at org.eclipse.swt.internal.Library.loadLibrary(Library.java:285)
+</span><span class='line'>  at org.eclipse.swt.internal.Library.loadLibrary(Library.java:194)
+</span><span class='line'>  at org.eclipse.swt.internal.C.&lt;clinit&gt;(C.java:21)
+</span><span class='line'>  at org.eclipse.swt.internal.Converter.wcsToMbcs(Converter.java:63)
+</span><span class='line'>  at org.eclipse.swt.internal.Converter.wcsToMbcs(Converter.java:54)
+</span><span class='line'>  at org.eclipse.swt.widgets.Display.&lt;clinit&gt;(Display.java:132)
+</span><span class='line'>  at org.eclipse.ui.internal.Workbench.createDisplay(Workbench.java:695)
+</span><span class='line'>  at org.eclipse.ui.PlatformUI.createDisplay(PlatformUI.java:161)
+</span><span class='line'>  at org.eclipse.ui.internal.ide.application.IDEApplication.createDisplay(IDEApplication.java:153)
+</span><span class='line'>  at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:95)
+</span><span class='line'>  at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+</span><span class='line'>  at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+</span><span class='line'>  at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+</span><span class='line'>  at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+</span><span class='line'>  at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+</span><span class='line'>  at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+</span><span class='line'>  at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+</span><span class='line'>  at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+</span><span class='line'>  at java.lang.reflect.Method.invoke(Method.java:597)
+</span><span class='line'>  at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+</span><span class='line'>  at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+</span><span class='line'>  at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+</span><span class='line'>  at org.eclipse.equinox.launcher.Main.main(Main.java:1386)</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Solution</h2>
+
+<p>把相关文件拷贝到<code>~/.swt/lib/linux/x86_64</code>下即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>cp /usr/lib/jni/libswt-*3740.so ~/.swt/lib/linux/x86_64
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">datawolf</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-04T15:16:00+08:00" pubdate data-updated="true">Apr 4<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/eclipse/'>eclipse</a>, <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/03/how-to-install-sun-jdk-6-on-ubuntu-linux/" title="Previous Post: How to install sun jdk 6 on ubuntu linux">&laquo; How to install sun jdk 6 on ubuntu linux</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/04/06/using-bat-file-to-run-python-program-on-windows/" title="Next Post: using bat file to run python program on windows">using bat file to run python program on windows &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - datawolf -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'datawolf';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://datawolf.github.com/blog/2013/04/04/ubuntuxia-an-zhuang-eclipsede-could-not-load-swt-librarywen-ti/';
+        var disqus_url = 'http://datawolf.github.com/blog/2013/04/04/ubuntuxia-an-zhuang-eclipsede-could-not-load-swt-librarywen-ti/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

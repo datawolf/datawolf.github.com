@@ -1,0 +1,469 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>which 命令分析 - Linux Primer</title>
+  <meta name="author" content="datawolf">
+
+  
+  <meta name="description" content="环境 Linux 3.2.0-40-generic #64-Ubuntu SMP Mon Mar 25 21:22:10 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux which 命令的位置 1
+2
+3
+datawolf@datawolf-ThinkPad- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linux Primer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><div style="
+    height: 6px;
+    position: fixed;
+    background: #a2cbfa;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 3;
+"></div>
+<hgroup>
+  <h1><a href="/">Linux Primer</a></h1>
+  
+    <h2>Dive into linux kernel</h2>
+  
+  
+  <p class="profile"><a href="/"><img src="/images/profile.png"></a></p>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/books">Books</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Which 命令分析</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-14T17:03:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>环境</h2>
+
+<p>Linux 3.2.0-40-generic #64-Ubuntu SMP Mon Mar 25 21:22:10 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux</p>
+
+<h3>which 命令的位置</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>datawolf@datawolf-ThinkPad-Edge:~<span class="nv">$ </span>which -a which
+</span><span class='line'>/usr/bin/which
+</span><span class='line'>/bin/which
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>分析两个which文件的类型</h3>
+
+<p>通过以下shell命令可以看出，<code>/usr/bin/which</code>是一个指向<code>/bin/which</code>的符号链接。而<code>/bin/which</code>是一个shell脚本。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>datawolf@datawolf-ThinkPad-Edge:~<span class="nv">$ </span>ls -al  /usr/bin/which /bin/which
+</span><span class='line'>-rwxr-xr-x 1 root root 946 Mar 30  2012 /bin/which
+</span><span class='line'>lrwxrwxrwx 1 root root  10 Feb 21 16:23 /usr/bin/which -&gt; /bin/which
+</span><span class='line'>datawolf@datawolf-ThinkPad-Edge:~<span class="nv">$ </span>file /usr/bin/which
+</span><span class='line'>/usr/bin/which: symbolic link to <span class="sb">`</span>/bin/which<span class="err">&#39;</span>
+</span><span class='line'>datawolf@datawolf-ThinkPad-Edge:~<span class="nv">$ </span>file /bin/which
+</span><span class='line'>/bin/which: POSIX shell script, ASCII text executable
+</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
+
+
+<h3>/bin/which 文件分析</h3>
+
+<p><strong>which</strong>命令的原理：该命令在系统<code>$PATH</code>环境变量指向的目录中，寻找是否有指定的可执行的命令。
+其用发如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>which -a ping <span class="c"># 寻找所有的ping命令在系统中的路径位置</span>
+</span><span class='line'><span class="nv">$ </span>which ping <span class="c"># 寻找第一个ping命令在系统中的路径位置</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>which</strong>命令的源代码如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># -e 如果命令带非0返回值，立即退出</span>
+</span><span class='line'><span class="c"># -f 禁止带扩展名的路径</span>
+</span><span class='line'><span class="nb">set</span> -ef
+</span><span class='line'>
+</span><span class='line'><span class="c"># $KSH_VERSION变量表示ksh的版本</span>
+</span><span class='line'><span class="k">if </span><span class="nb">test</span> -n <span class="s2">&quot;$KSH_VERSION&quot;</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">  </span>puts<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      print -r -- <span class="s2">&quot;$*&quot;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="k">  </span>puts<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="nb">printf</span> <span class="s1">&#39;%s\n&#39;</span> <span class="s2">&quot;$*&quot;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">ALLMATCHES</span><span class="o">=</span>0
+</span><span class='line'>
+</span><span class='line'><span class="c"># 查找是否有选项-a</span>
+</span><span class='line'><span class="c"># 如果有选项-a，打印所有匹配的命令，否则打印第一个匹配的命令</span>
+</span><span class='line'><span class="k">while </span><span class="nb">getopts </span>a whichopts
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">        case</span> <span class="s2">&quot;$whichopts&quot;</span> in
+</span><span class='line'>                a<span class="o">)</span> <span class="nv">ALLMATCHES</span><span class="o">=</span>1 ;;
+</span><span class='line'>                ?<span class="o">)</span> puts <span class="s2">&quot;Usage: $0 [-a] args&quot;</span>; <span class="nb">exit </span>2 ;;
+</span><span class='line'>        <span class="k">esac</span>
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># shift n 表示将原来的位置参数左移n位。</span>
+</span><span class='line'><span class="c"># $OPTIND 代表下一个待处理的参数的索引</span>
+</span><span class='line'><span class="nb">shift</span> <span class="k">$((</span><span class="nv">$OPTIND</span> <span class="o">-</span> <span class="m">1</span><span class="k">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># $#标表示参数的个数</span>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$#&quot;</span> -eq 0 <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k"> </span><span class="nv">ALLRET</span><span class="o">=</span>1
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="k"> </span><span class="nv">ALLRET</span><span class="o">=</span>0
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'><span class="k">case</span> <span class="nv">$PATH</span> in
+</span><span class='line'>  <span class="o">(</span>*<span class="o">[</span>!:<span class="o">]</span>:<span class="o">)</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:&quot;</span> ;;
+</span><span class='line'><span class="k">esac</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># $@代表输入的所有的命令行参数</span>
+</span><span class='line'><span class="c"># $IFS表示bash内部的域分割符。默认值为空格</span>
+</span><span class='line'><span class="c"># [-f &quot;filename&quot;] 判断是否是一个文件</span>
+</span><span class='line'><span class="c"># [-x &quot;filename&quot;] 判断文件是否具有可执行权限</span>
+</span><span class='line'><span class="c"># [-z &quot;str&quot;] 判断字符串长度是否为0</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for </span>PROGRAM in <span class="s2">&quot;$@&quot;</span>; <span class="k">do</span>
+</span><span class='line'><span class="k"> </span><span class="nv">RET</span><span class="o">=</span>1
+</span><span class='line'> <span class="nv">IFS_SAVE</span><span class="o">=</span><span class="s2">&quot;$IFS&quot;</span>
+</span><span class='line'> <span class="nv">IFS</span><span class="o">=</span>:
+</span><span class='line'><span class="c"># 该程序首先判断具有全部路径的命令是否存在，比如这样使用： which /usr/bin/ls</span>
+</span><span class='line'><span class="c"># 如果当使用如下时： which ls 该程序将在系统$PATH的路径下寻找相应的程序。</span>
+</span><span class='line'> <span class="k">case</span> <span class="nv">$PROGRAM</span> in
+</span><span class='line'>  */*<span class="o">)</span>
+</span><span class='line'>   <span class="k">if</span> <span class="o">[</span> -f <span class="s2">&quot;$PROGRAM&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> -x <span class="s2">&quot;$PROGRAM&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">    </span>puts <span class="s2">&quot;$PROGRAM&quot;</span>
+</span><span class='line'>    <span class="nv">RET</span><span class="o">=</span>0
+</span><span class='line'>   <span class="k">fi</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  *<span class="o">)</span>
+</span><span class='line'>   <span class="k">for </span>ELEMENT in <span class="nv">$PATH</span>; <span class="k">do</span>
+</span><span class='line'><span class="k">    if</span> <span class="o">[</span> -z <span class="s2">&quot;$ELEMENT&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">     </span><span class="nv">ELEMENT</span><span class="o">=</span>.
+</span><span class='line'>    <span class="k">fi</span>
+</span><span class='line'><span class="k">    if</span> <span class="o">[</span> -f <span class="s2">&quot;$ELEMENT/$PROGRAM&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> -x <span class="s2">&quot;$ELEMENT/$PROGRAM&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">     </span>puts <span class="s2">&quot;$ELEMENT/$PROGRAM&quot;</span>
+</span><span class='line'>     <span class="nv">RET</span><span class="o">=</span>0
+</span><span class='line'>     <span class="o">[</span> <span class="s2">&quot;$ALLMATCHES&quot;</span> -eq 1 <span class="o">]</span> <span class="o">||</span> <span class="nb">break</span>
+</span><span class='line'><span class="nb">    </span><span class="k">fi</span>
+</span><span class='line'><span class="k">   done</span>
+</span><span class='line'>   ;;
+</span><span class='line'> <span class="k">esac</span>
+</span><span class='line'><span class="k"> </span><span class="nv">IFS</span><span class="o">=</span><span class="s2">&quot;$IFS_SAVE&quot;</span>
+</span><span class='line'> <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$RET&quot;</span> -ne 0 <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">  </span><span class="nv">ALLRET</span><span class="o">=</span>1
+</span><span class='line'> <span class="k">fi</span>
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'><span class="k"> </span>
+</span><span class='line'><span class="nb">exit</span> <span class="s2">&quot;$ALLRET&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>CentOS 中的which命令</h3>
+
+<h4>环境</h4>
+
+<p>Linux 2.6.32-220.17.1.el6.x86_64 #1 SMP Wed May 16 00:01:37 BST 2012 x86_64 x86_64 x86_64 GNU/Linux</p>
+
+<p>which - shows the full path of (shell) commands</p>
+
+<p>Which takes one or more arguments. For each of its arguments it prints to stdout the full path of the executables that would have been executed when this argument had been entered at the shell prompt. It does this by searching for an executable or script in the directories listed in the environment variable PATH using the same algorithm as bash(1)</p>
+
+<h4>在CentOS下，which是c语言写的</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>wanglong@wanglong ~<span class="o">]</span><span class="nv">$ </span>which -a which
+</span><span class='line'><span class="nb">alias </span><span class="nv">which</span><span class="o">=</span><span class="s1">&#39;alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde&#39;</span>
+</span><span class='line'>  /usr/bin/which
+</span><span class='line'>/usr/bin/which
+</span><span class='line'><span class="o">[</span>wanglong@wanglong ~<span class="o">]</span><span class="nv">$ </span>file /usr/bin/which
+</span><span class='line'>/usr/bin/which: ELF 64-bit LSB executable, x86-64, version 1 <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked <span class="o">(</span>uses shared libs<span class="o">)</span>, <span class="k">for </span>GNU/Linux 2.6.18, stripped
+</span><span class='line'><span class="o">[</span>wanglong@wanglong ~<span class="o">]</span><span class="nv">$ </span>ldd /usr/bin/which
+</span><span class='line'>  linux-vdso.so.1 <span class="o">=</span>&gt;  <span class="o">(</span>0x00007fff74fff000<span class="o">)</span>
+</span><span class='line'>  libc.so.6 <span class="o">=</span>&gt; /lib64/libc.so.6 <span class="o">(</span>0x0000003250400000<span class="o">)</span>
+</span><span class='line'>  /lib64/ld-linux-x86-64.so.2 <span class="o">(</span>0x0000003250000000<span class="o">)</span>
+</span><span class='line'><span class="o">[</span>wanglong@wanglong ~<span class="o">]</span><span class="nv">$ </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">datawolf</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-14T17:03:00+08:00" pubdate data-updated="true">Apr 14<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/shell/'>shell</a>, <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/blog/categories/which/'>which</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/06/zi-dong-bei-fen-wang-zhan-he-shu-ju-ku-de-shelljiao-ben/" title="Previous Post: 自动备份网站和数据库的shell脚本">&laquo; 自动备份网站和数据库的shell脚本</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/05/26/linuxshi-jie-li-de-shi-jian/" title="Next Post: Linux世界里的时间">Linux世界里的时间 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - datawolf -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'datawolf';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi/';
+        var disqus_url = 'http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

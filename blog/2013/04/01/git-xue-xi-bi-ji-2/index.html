@@ -1,0 +1,584 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>git 学习笔记 2 - Linux Primer</title>
+  <meta name="author" content="datawolf">
+
+  
+  <meta name="description" content="历史 显示全部历史记录 1
+$ git log 显示版本历史，以及版本间的内容差异 1
+$ git log -p 只显示最近一个提交 1
+$ git log -1 显示最近的20个提交，以及版本间的内容差异 1
+$ git log -20 -p 显示最近6个小时的提交 1
+$ git log -- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://datawolf.github.com/blog/2013/04/01/git-xue-xi-bi-ji-2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linux Primer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><div style="
+    height: 6px;
+    position: fixed;
+    background: #a2cbfa;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 3;
+"></div>
+<hgroup>
+  <h1><a href="/">Linux Primer</a></h1>
+  
+    <h2>Dive into linux kernel</h2>
+  
+  
+  <p class="profile"><a href="/"><img src="/images/profile.png"></a></p>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/books">Books</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Git 学习笔记 2</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-01T14:14:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>历史</h1>
+
+<p>显示全部历史记录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示版本历史，以及版本间的内容差异</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -p
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>只显示最近一个提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示最近的20个提交，以及版本间的内容差异</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -20 -p
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示最近6个小时的提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --since<span class="o">=</span><span class="s2">&quot;6 hours&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示两天前的提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --before<span class="o">=</span><span class="s2">&quot;2 days&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示比HEAD（当前检出分支的末稍）早三个提交的那个提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1 HEAD~3
+</span><span class='line'><span class="nv">$ </span>git log -1 HEAD^^^
+</span><span class='line'><span class="nv">$ </span>git log -1 HEAD~1^^
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示两个版本直接的提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log &lt;start point&gt;...&lt;end point&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
+
+
+<p>显示历史，每一个提交显示一行，包括提交注释的第一行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --pretty<span class="o">=</span>oneline
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示改动行数统计</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --stat
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示改动文件的名称和状态</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --name-status
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示当前工作目录树和暂存区间的差别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示暂存区和版本库之间的差别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff --cached
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示工作目录树和版本库间的差别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff HEAD
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示工作目录树和版本库中某次提交版本之间的差别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff &lt;start point&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示版本库中两个版本之间的差别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff &lt;start point&gt; &lt;end point&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示差别的相关统计</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff --stat &lt;start point&gt; <span class="o">[</span>&lt;end point&gt;<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示文件中各个部分的修改者及相关提交信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git blame &lt;some file&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示文件中各部分的修改者及相关提交信息，包括在文件移动内容方面的情况</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git blame &lt;some file&gt;
+</span><span class='line'><span class="nv">$ </span>git blame -M &lt;some file&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示历史时，显示复制和粘贴信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -C -C -p -1 &lt;some point&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>远程版本库</h1>
+
+<p>克隆远程版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone &lt;some repository&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>克隆版本库，但只下载其中最近200个提交的历史记录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone --depth 200 &lt;some repository&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在本地版本库中设置远程版本库的别名</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git remote add &lt;remote repository&gt; &lt;repository url&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示远程分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -r
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基于远程分支创建本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch &lt;new branch&gt; &lt;remote branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基于远程标签创建本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch &lt;new branch&gt; &lt;remote tag&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>从别名为<code>orgin</code>的远程版本库中取来修改变化，但不合并到本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git fetch
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>从任意的远程版本库中取来修改变化，但不合并到本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git fetch &lt;remote repository&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>从任意的远程版本库中取来修改变化，并合并到当前检出的本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git pull &lt;remote repository&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>从别名<code>orgin</code>的远程版本库中取来修改变化，并合并到当前检出的本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git pull
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把修改变化从本地分支推入远程版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push &lt;remote repository&gt; &lt;<span class="nb">local </span>branch&gt;:&lt;remote branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把修改变化从本地分支推入远程版本库中同名分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push &lt;remote repository&gt; &lt;<span class="nb">local </span>branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把修改变化从本地新建分支推入远程版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push &lt;remote repository&gt; &lt;<span class="nb">local </span>branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把修改变化推入别名为<code>orgin</code>的远程版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在远程版本库中删除分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push &lt;remote repository&gt;  :&lt;remote branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在本地版本库中删除所有远程版本库中已不存在的分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git remote prune &lt;remote repository&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在本地版本库中删除某个远程版本库的简称，以及该远程版本库相关的分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git remote rm &lt;remote repository&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>操作示例</h1>
+
+<p>查看git日志</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log
+</span><span class='line'><span class="nv">$ </span>git log 7b1558c
+</span><span class='line'><span class="nv">$ </span>git log -10
+</span><span class='line'><span class="nv">$ </span>git log --since<span class="o">=</span><span class="s2">&quot;5 hours&quot;</span>
+</span><span class='line'><span class="nv">$ </span>git log --since<span class="o">=</span><span class="s2">&quot;5 hours&quot;</span> -1
+</span><span class='line'><span class="nv">$ </span>git log 18f822e..0bb3dfb
+</span><span class='line'><span class="nv">$ </span>git log 18f822e..HEAD
+</span><span class='line'><span class="nv">$ </span>git log --pretty<span class="o">=</span>format:<span class="s2">&quot;%h %s&quot;</span> 1.0..HEAD
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看版本之间的差异</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff 18f822e
+</span><span class='line'><span class="nv">$ </span>git diff --stat 1.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查明该向谁问责</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git blame hello.html
+</span><span class='line'><span class="nv">$ </span>git blame -L 12,13 hello.html
+</span><span class='line'><span class="nv">$ </span>git blame -L 12,+2 hello.html
+</span><span class='line'><span class="nv">$ </span>git blame -L 12,-2 hello.html
+</span><span class='line'><span class="nv">$ </span>git blame -: <span class="s2">&quot;/&lt;\/body&gt;/&quot;</span>,+2 hello.html
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>复位操作，将版本库复位到<code>HEAD</code>之前的那个版本了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git reset --hard HEAD^
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示远程分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch
+</span><span class='line'>* master
+</span><span class='line'><span class="nv">$ </span>git branch -r
+</span><span class='line'>  origin/HEAD -&gt; origin/master
+</span><span class='line'>  origin/about
+</span><span class='line'>  origin/alternate
+</span><span class='line'>  origin/contacts
+</span><span class='line'>  origin/master
+</span><span class='line'>  origin/new
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>更新远程分支，但不会把远程分支上的修改合并到本地分支上。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git fetch
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>取来远程分支并且合并，需要两个参数，一个是远程版本库名称，另一个需要拖入的远程分支名称</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git pull
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>推入改动，调用不带参数的<code>git push</code>命令时，git会推入到默认版本库origin中，并把本地版本库中当前所在分支的
+变更推入到远程版本库对应的分支上。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将本地分支上<code>mybranch</code>上的提交推入远程版本库的主分支上</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git push origin  mybranch:master
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>添加新的远程版本库，必须有相应的权限</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">datawolf</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-01T14:14:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/01/git-xue-xi-bi-ji-1/" title="Previous Post: git 学习笔记 1">&laquo; git 学习笔记 1</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/04/03/how-to-install-sun-jdk-6-on-ubuntu-linux/" title="Next Post: How to install sun jdk 6 on ubuntu linux">How to install sun jdk 6 on ubuntu linux &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - datawolf -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'datawolf';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://datawolf.github.com/blog/2013/04/01/git-xue-xi-bi-ji-2/';
+        var disqus_url = 'http://datawolf.github.com/blog/2013/04/01/git-xue-xi-bi-ji-2/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,811 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>git 学习笔记 1 - Linux Primer</title>
+  <meta name="author" content="datawolf">
+
+  
+  <meta name="description" content="安装和初始化 配置全局用户名和电子邮件地址 1
+2
+$ git config --global user.name &quot;yourname&quot;
+$ git config --global user.email &quot;yourname@mail.com&quot; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://datawolf.github.com/blog/2013/04/01/git-xue-xi-bi-ji-1">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linux Primer" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css"> -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><div style="
+    height: 6px;
+    position: fixed;
+    background: #a2cbfa;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 3;
+"></div>
+<hgroup>
+  <h1><a href="/">Linux Primer</a></h1>
+  
+    <h2>Dive into linux kernel</h2>
+  
+  
+  <p class="profile"><a href="/"><img src="/images/profile.png"></a></p>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/books">Books</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Git 学习笔记 1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-01T09:37:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h1>安装和初始化</h1>
+
+<p>配置全局用户名和电子邮件地址</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git config --global user.name <span class="s2">&quot;yourname&quot;</span>
+</span><span class='line'><span class="nv">$ </span>git config --global user.email <span class="s2">&quot;yourname@mail.com&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为特定版本库配置用户名和电子邮件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /path/to/repo
+</span><span class='line'><span class="nv">$ </span>git config  user.name <span class="s2">&quot;yourname&quot;</span>
+</span><span class='line'><span class="nv">$ </span>git config  user.email <span class="s2">&quot;yourname@mail.com&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git config --global --list
+</span><span class='line'>user.name<span class="o">=</span>yourname
+</span><span class='line'>user.email<span class="o">=</span>yourname@mail.com
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在命令行中使用不同的颜色显示不同类型的内容，需要设置<code>color.ui</code>的值为<code>auto</code>或者<code>always</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git config --global color.ui <span class="s2">&quot;auto&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>初始化新版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>mkdir /path/to/repo
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /path/to/repo
+</span><span class='line'><span class="nv">$ </span>git init
+</span><span class='line'><span class="nv">$ </span>git add .
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;initial import&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>克隆版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone &lt;repository url&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将目录中的内容纳入到git版本控制</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /path/to/existing/directory
+</span><span class='line'><span class="nv">$ </span>git init
+</span><span class='line'><span class="nv">$ </span>git add .
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;initial import of some project&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
+
+
+<p>在本地版本库中设置远程版本库的别名</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git remote add &lt;remote repository&gt;  &lt;repository url&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>日常操作</h1>
+
+<p>添加新文件或暂存已有文件上的改动，然后提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add &lt;some file&gt;
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;&lt;some message&gt;&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换已有文件上的部分修改</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add -p <span class="o">[</span>&lt;some file&gt; <span class="o">[</span>&lt;some file&gt; <span class="o">[</span>and so on<span class="o">]]]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用交互式添加文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add -i
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>暂存已纳入git版本控制之下的文件的修改</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add -u <span class="o">[</span>&lt;some file&gt; <span class="o">[</span>&lt;some file&gt;<span class="o">]]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>提交已纳入git版本控制之下的文件的所有修改</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;&lt;some message&gt;&quot;</span> -a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>清除工作目录树中的修改</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout HEAD &lt;some file&gt; <span class="o">[</span>&lt;some file&gt;<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>取消已暂存但尚未提交的修改的暂存标识</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git reset HEAD &lt;some file&gt; <span class="o">[</span>&lt;some file&gt;<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修复上一次提交中的问题，改动相关文件并暂存……</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;&lt;some message&gt;&quot;</span> --amend
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修复上一次提交中的内容，并复用上次的提交注释</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -C HEAD --amend
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>分支</h1>
+
+<p>列出本地分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git  branch
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>列出远程分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -r
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>列出所有分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基于当前分支（的末稍）创建新分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch &lt;new branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>检出另一条分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout &lt;new branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基于当前分支创建新分支，同时检出该分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout -b &lt;new branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基于另一个起点，创建新分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch &lt;some existing branch&gt; &lt;start point&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建同名新分支，覆盖已有分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -f &lt;some existing branch&gt; <span class="o">[</span>&lt;start point&gt;<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>移动或重命名分支
+1、只有当<new branch name>不存在时</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout -m &lt;existing branch name&gt; &lt;new branch name&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、如果<new branch name>以存在，就覆盖她</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout -M &lt;existing branch name&gt; &lt;new branch name&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把另一条分支合并到当前分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git merge &lt;some branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>合并但不提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git merge --no-commit &lt;some branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>拣选合并，并且提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git cherry-pick  &lt;commit name&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>拣选合并，但不提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git cherry-pick -n &lt;commit name&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把一条分支上的内容压和到另一条分支（上的一个提交）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git merge --squash &lt;some branch&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>删除分支</p>
+
+<p>1、进当欲删除分支已经合并到当前分支时</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -d &lt;branch to delete&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、不论欲删除分支是否已合并到当前分支上</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -D &lt;branch to delete&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>举例说明</h1>
+
+<p>添加一个文件index.html，使用<code>git add</code>命令将该文件添加到版本库的索引</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add index.html
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用<code>git commit</code>命令提交，即创建一个<code>提交记录</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;add in hello world HTML&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看提交的相关信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在项目中工作，修改了index.html，显示工作树的状态</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git status
+</span><span class='line'><span class="nv">$ </span>git add index.html
+</span><span class='line'><span class="nv">$ </span>git status
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Git可以接受任意多次的留言的输入，每一次另起一段</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;add xxx to xxx&quot;</span> <span class="se">\</span>
+</span><span class='line'>  -m <span class="s2">&quot;this is the second commit document&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>提交所有的修改</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Git 输出一个提交条目或者多个提交条目，使用<code>-num</code>参数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1
+</span><span class='line'><span class="nv">$ </span>git log -2
+</span><span class='line'><span class="nv">$ </span>git log -5
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建一个分支，需要两个参数，第一个是新分支名称，第二个是父分支名称</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch RB_1.0  master
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>切换到分支RB_1.0</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout RB_1.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>处理发布时，打标签命令。需要两个参数，第一个是标签的名称，第二个是分支的末稍</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git tag 1.0 RB_1.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看版本库中的标签列表</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git tag
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>分支合并，使用变基命令，<code>git rebase</code> 跟一个参数，指的是变基到哪一条分支的末稍。
+将master分支变基到RB_1.0分支的末稍</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout master
+</span><span class='line'><span class="nv">$ </span>git rebase RB_1.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>删除分支RB_1.0</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -d RB_1.0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>删除分支后，只是删除了分支的名称，不会删除分支上的任何实际内容，可以使用标签来找到从标签
+到版本树起点的一连串的提交记录</p>
+
+<p>打补丁时创建分支的过程</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch RB_1.0.1 1.0
+</span><span class='line'><span class="nv">$ </span>git checkout RB_1.0.1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改完后在合并到分支1.0中。</p>
+
+<p>快速产看历史记录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --pretty<span class="o">=</span>oneline
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为代码发布创建归档文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git archive --format<span class="o">=</span>tar <span class="se">\</span>
+</span><span class='line'>              --prefix<span class="o">=</span>mysite-1.0/ 1.0 <span class="se">\</span>
+</span><span class='line'>              | gzip &gt; mysite-1.0.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git archive --format<span class="o">=</span>zip <span class="se">\</span>
+</span><span class='line'>              --prefix<span class="o">=</span>mysite-1.0/ 1.0 <span class="se">\</span>
+</span><span class='line'>              &gt; mysite-1.0.zip
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>克隆远程版本库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone http://github.com/tswicegood/mysite.git mysite-remote
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>提交修改有三种方法</p>
+
+<p>1、先暂存，在提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add some-file
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;changes to some-file&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、直接提交，提交工作目录树中的所有修改。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;changes to some-file&quot;</span>  -a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3、直接修改，提交工作目录树中指定的修改。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;changes to some-file&quot;</span> some-file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将命令<code>git commit</code>简写为<code>git ci</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git config --global alias.ci <span class="s2">&quot;commit&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看工作目录树中所有的改动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git status
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>比较工作目录树与暂存区之间的区别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>比较暂存区和版本库直接的区别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff --cached
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>比较工作目录树（包括暂存和未暂存的修改）与版本库中的区别</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git diff HEAD
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>HEAD</code>指的是当前所在分支末稍的最新提交。</p>
+
+<p>文件重命名与移动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git mv index.html hello.html
+</span><span class='line'><span class="nv">$ </span>git status
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;rename to more appropriate name&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>忽略文件</p>
+
+<p>1、可以在工作目录树下设置文件<code>.gitignore</code>来设置版本库级别的忽略。</p>
+
+<p>2、可以通过编辑<code>.git/info/exclude</code>来设置本地级的忽略。</p>
+
+<p>修改分支的名称,<code>-m</code>不会覆盖已有的分支名称，所以新分支必须是唯一的。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -m master mymaster
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建新分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch new
+</span><span class='line'><span class="nv">$ </span>git branch
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>检出刚才创建的分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout new
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>用快捷方法创建新分支<code>alternate</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout -b alternate master
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>合并分支间的修改</p>
+
+<p>1、直接合并</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch
+</span><span class='line'>* alternate
+</span><span class='line'>  master
+</span><span class='line'><span class="nv">$ </span>touch about.html
+</span><span class='line'><span class="nv">$ </span>git add about.html
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;add the skeleton of an about page&quot;</span>
+</span><span class='line'><span class="nv">$ </span>git checkout master
+</span><span class='line'><span class="nv">$ </span>git merge alternate
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、压合合并</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout -b contact master
+</span><span class='line'><span class="nv">$ </span>git add contact.html
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;add contact file with email&quot;</span>
+</span><span class='line'><span class="c">#修改contact.html文件</span>
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;add secondary email&quot;</span> -a
+</span><span class='line'><span class="nv">$ </span>git checkout master
+</span><span class='line'><span class="nv">$ </span>git merge --squash contact
+</span><span class='line'><span class="nv">$ </span>git status
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;add contact&quot;</span> <span class="se">\</span>
+</span><span class='line'>  -m <span class="s2">&quot;has primary and secondary email.&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3、拣选合并<code>git cherry-pick</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git cherry-pick 9826311
+</span><span class='line'><span class="nv">$ </span>git cherry-pick -n 9826311
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>删除分支,<code>-d</code>删除合并了的分支，<code>-D</code>删除未合并的分支</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch -d about2
+</span><span class='line'><span class="nv">$ </span>git branch -D about
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">datawolf</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-01T09:37:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/03/29/zombie-ninjas-attack-a-survivors-retrospective/" title="Previous Post: Zombie Ninjas Attack: A survivor's retrospective">&laquo; Zombie Ninjas Attack: A survivor's retrospective</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/04/01/git-xue-xi-bi-ji-2/" title="Next Post: git 学习笔记 2">git 学习笔记 2 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - datawolf -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'datawolf';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://datawolf.github.com/blog/2013/04/01/git-xue-xi-bi-ji-1/';
+        var disqus_url = 'http://datawolf.github.com/blog/2013/04/01/git-xue-xi-bi-ji-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

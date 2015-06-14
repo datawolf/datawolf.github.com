@@ -1,0 +1,252 @@
+digraph famliytree_of_wang {
+	ranksep=.75;
+	center=true;
+	rankdir=TB;
+	dpi=200;
+	bgcolor=cornsilk;
+	fontsize=44;
+	label="王氏家谱";
+
+	edge [color=brown];
+
+	{
+		node [shape=plaintext, fontsize=16,fontcolor=brown];
+
+		/* the time-line graph */
+		第一世 -> 第二世 -> 第三世 -> 第四世 -> 第五世 -> 第六世 -> 第七世 ->
+		第八世 -> 第九世 -> 第十世 -> 第十一世 -> 第十二世 -> 第十三世 -> 第十四世 ->
+		第十五世 -> 第十六世 -> 第十七世 -> 第十八世 -> 第十九世 -> 第二十世 -> 第二十一世 ->
+		第二十二世 -> 第二十三世 -> 第二十四世 -> 第二十五世 ;
+	
+		"0" [label="鼻祖"];
+	}
+
+	{ 
+		rank = same;
+	};
+
+	node [shape=invhouse,fontsize=16,fillcolor=burlywood,style=filled,fontcolor=brown,color=brown];
+	
+	
+
+	"1" [label="宝"];
+	{ rank = same; 第一世; "1";}
+
+	"2-1" [label="伯\n\n大"];
+	"2-2" [label="仲\n\n二"];
+	"2-3" [label="叔\n\n三"];
+	"2-4" [label="季\n\n四"];
+	{ rank = same; 第二世; "2-4"; "2-2"; "2-1"; "2-3";}
+
+	"3-1" [label="敬\n\n实"];
+	"3-2" [label="彦\n\n实"];
+	"3-3" [label="诚\n\n实"];
+	"3-4" [label="信\n\n实"];
+	{ rank = same; 第三世; "3-1"; "3-2"; "3-3"; "3-4";}
+
+	"4-1" [label="长\n\n法\n卿"];
+	"4-2" [label="次\n\n顺\n卿"];
+	{ rank = same; 第四世; "4-1"; "4-2";}
+
+	"5-1" [label="长\n\n元\n中"];
+	"5-2" [label="次\n\n元\n法"];
+	"5-3" [label="三\n\n三\n中"];
+	{ rank = same; 第五世; "5-1"; "5-2"; "5-3";}
+
+	"6-1" [label="\n毅\n\n"];
+	"6-2" [label="\n棋\n\n"];
+	"6-3" [label="\n松\n\n"];
+	"6-4" [label="\n果\n\n"];
+	{ rank = same; 第六世; "6-1"; "6-2"; "6-3"; "6-4";}
+
+	"7-1" [label="景\n\n宽"];
+	{ rank = same; 第七世; "7-1";}
+
+	"8-1" [label="长\n\n奎"];
+	"8-2" [label="次\n\n顼"];
+	"8-3" [label="三\n\n芦"];
+	"8-4" [label="四\n\n久"];
+	"8-5" [label="五\n\n伦"];
+	"8-6" [label="六\n\n宣"];
+	{ rank = same; 第八世; "8-1"; "8-2"; "8-3"; "8-4"; "8-5"; "8-6";}
+
+	"9-1" [label="长\n\n現"];
+	"9-2" [label="次\n\n相"];
+	{ rank = same; 第九世; "9-1"; "9-2";}
+
+	"10-1" [label="长\n\n世\n德"];
+	"10-2" [label="次\n\n世\n政"];
+	"10-3" [label="三\n\n世\n昌"];
+	"10-4" [label="四\n\n世\n荣"];
+	{ rank = same; 第十世; "10-1"; "10-2"; "10-3"; "10-4";}
+
+	"11-1" [label="长\n\n川"];
+	"11-2" [label="次\n\n項"];
+	"11-3" [label="三\n\n顯"];
+	{ rank = same; 第十一世; "11-1"; "11-2"; "11-3";}
+
+	"12-1" [label="國\n\n棟"];
+	{ rank = same; 第十二世; "12-1";}
+
+	"13-1" [label="长\n\n迩\n燧"];
+	"13-2" [label="次\n\n迩\n均"];
+	"13-3" [label="三\n\n迩\n贵"];
+	"13-4" [label="四\n\n迩\n功"];
+	{ rank = same; 第十三世; "13-1"; "13-2"; "13-3"; "13-4";}
+
+	"14-1" [label="长\n\n又\n春"];
+	"14-2" [label="次\n\n兴\n春"];
+	"14-3" [label="三\n\n萬\n春"];
+	"14-4" [label="四\n\n叙\n春"];
+	{ rank = same; 第十四世; "14-1"; "14-2"; "14-3"; "14-4";}
+
+	"15-1" [label="振\n\n洛"];
+	"15-2" [label="振\n\n邦"];
+	{ rank = same; 第十五世; "15-1"; "15-2"}
+
+	"16-1" [label="大\n\n亮"];
+	{ rank = same; 第十六世; "16-1";}
+
+	"17-1" [label="汉\n\n文"];
+	{ rank = same; 第十七世; "17-1";}
+
+	"18-1" [label="长\n\n雲\n瑞"];
+	"18-2" [label="次\n\n雲\n和"];
+	"18-3" [label="三\n\n雲\n凤"];
+	"18-4" [label="四\n\n雲\n岫"];
+	{ rank = same; 第十八世; "18-1"; "18-2"; "18-3"; "18-4";}
+
+	"19-1" [label="长\n\n化\n勤"];
+	"19-2" [label="次\n\n化\n铭"];
+	{ rank = same; 第十九世; "19-1"; "19-2";}
+
+	"20-1" [label="乐\n\n山"];
+	{ rank = same; 第二十世; "20-1";}
+
+	"21-1" [label="重\n\n儒"];
+	{ rank = same; 第二十一世; "21-1";}
+
+	"22-1" [label="惠\n\n民"];
+	"22-2" [label="惠\n\n中"];
+	{ rank = same; 第二十二世; "22-1"; "22-2";}
+
+	"23-1" [label="毓\n\n堂"];
+	"23-2" [label="毓\n\n周"];
+	"23-3" [label="毓\n\n刚"];
+	"23-4" [label="毓\n\n强"];
+	"23-5" [label="毓\n\n安"];
+	{ rank = same; 第二十三世; "23-1"; "23-2"; "23-3"; "23-4"; "23-5";}
+
+	"24-1" [label="正\n\n喜"];
+	"24-2" [label="小\n\n宝"];
+	"24-3" [label="\n\n龍"];
+	"24-4" [label="\n\n华"];
+	"24-5" [label="晓\n\n阳"];
+	"24-6" [label="艺\n\n佳"];
+	{ rank = same; 第二十四世; "24-1"; "24-2"; "24-3"; "24-4"; "24-5"; "24-6";}
+
+	"25-1" [label="轩\n\n朗"];
+	"25-3" [label="乐\n\n桐"];
+	"25-4" [label="\n\n烁"];
+	{ rank = same; 第二十五世; "25-1"; "25-3"; "25-4";}
+
+	"0" -> "1" [style=bold,color=darkolivegreen];
+
+	"1" -> "2-1";
+	"1" -> "2-2" [style=bold,color=darkolivegreen];
+	"1" -> "2-3";
+	"1" -> "2-4";
+
+	"2-2" -> "3-1";
+	"2-2" -> "3-2" [style=bold,color=darkolivegreen];
+	"2-2" -> "3-3";
+	"2-2" -> "3-4";
+
+	"3-2" -> "4-1";
+	"3-2" -> "4-2" [style=bold,color=darkolivegreen];
+
+	"4-2" -> "5-1" [style=bold,color=darkolivegreen];
+	"4-2" -> "5-2";
+	"4-2" -> "5-3";
+
+	"5-1" -> "6-1" [style=bold,color=darkolivegreen];
+	"5-1" -> "6-2";
+	"5-1" -> "6-3";
+	"5-1" -> "6-4";
+
+	"6-1" -> "7-1" [style=bold,color=darkolivegreen];
+
+	"7-1" -> "8-1";
+	"7-1" -> "8-2"; 
+	"7-1" -> "8-3";
+	"7-1" -> "8-4";
+	"7-1" -> "8-5";
+	"7-1" -> "8-6" [style=bold,color=darkolivegreen];
+
+	"8-6" -> "9-1";
+	"8-6" -> "9-2" [style=bold,color=darkolivegreen];
+
+	"9-2" -> "10-1" [style=bold,color=darkolivegreen];
+	"9-2" -> "10-2";
+	"9-2" -> "10-3";
+	"9-2" -> "10-4";
+
+	"10-1" -> "11-1";
+	"10-1" -> "11-2";
+	"10-1" -> "11-3" [style=bold,color=darkolivegreen];
+
+	"11-3" -> "12-1" [style=bold,color=darkolivegreen];
+
+	"12-1" -> "13-1";
+	"12-1" -> "13-2";
+	"12-1" -> "13-3" [style=bold,color=darkolivegreen];
+	"12-1" -> "13-4";
+
+	"13-3" -> "14-1";
+	"13-3" -> "14-2";
+	"13-3" -> "14-3" [style=bold,color=darkolivegreen];
+	"13-3" -> "14-4";
+
+
+	"14-3" -> "15-1" [style=bold,color=darkolivegreen];
+	"14-3" -> "15-2";
+
+	"15-1" -> "16-1" [style=bold,color=darkolivegreen];
+
+
+	"16-1" -> "17-1" [style=bold,color=darkolivegreen];
+
+	"17-1" -> "18-1" [style=bold,color=darkolivegreen];
+	"17-1" -> "18-2";
+	"17-1" -> "18-3";
+	"17-1" -> "18-4";
+
+	"18-1" -> "19-1" [style=bold,color=darkolivegreen];
+	"18-1" -> "19-2";
+
+	"19-1" -> "20-1" [style=bold,color=darkolivegreen];
+
+	"20-1" -> "21-1" [style=bold,color=darkolivegreen];
+
+	"21-1" -> "22-1";
+	"21-1" -> "22-2" [style=bold,color=darkolivegreen];
+
+	
+	"22-1" -> "23-1";
+	"22-1" -> "23-2";
+	"22-2" -> "23-3" [style=bold,color=darkolivegreen];
+	"22-2" -> "23-4" [style=bold,color=darkolivegreen];
+	"22-2" -> "23-5" [style=bold,color=darkolivegreen];
+
+	"23-3" -> "24-1" [style=bold,color=darkolivegreen];
+	"23-3" -> "24-2" [style=bold,color=darkolivegreen];
+	"23-4" -> "24-3" [style=bold,color=darkolivegreen];
+	"23-4" -> "24-4" [style=bold,color=darkolivegreen];
+	"23-5" -> "24-5" [style=bold,color=darkolivegreen];
+	"23-5" -> "24-6" [style=bold,color=darkolivegreen];
+
+	"24-1" -> "25-1" [style=bold,color=darkolivegreen];
+	"24-2" -> "25-3" [style=bold,color=darkolivegreen];
+	"24-2" -> "25-4" [style=bold,color=darkolivegreen];
+
+}

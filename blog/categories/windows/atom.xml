@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: windows | Linux Primer]]></title>
+  <link href="http://datawolf.github.com/blog/categories/windows/atom.xml" rel="self"/>
+  <link href="http://datawolf.github.com/"/>
+  <updated>2015-06-14T17:24:30+08:00</updated>
+  <id>http://datawolf.github.com/</id>
+  <author>
+    <name><![CDATA[datawolf]]></name>
+    <email><![CDATA[datawolf@laoqinren.net]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[using bat file to run python program on windows]]></title>
+    <link href="http://datawolf.github.com/blog/2013/04/06/using-bat-file-to-run-python-program-on-windows/"/>
+    <updated>2013-04-06T15:56:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2013/04/06/using-bat-file-to-run-python-program-on-windows</id>
+    <content type="html"><![CDATA[<h2>在windows下批处理文件中调用python</h2>
+
+<p>由于python的变量的问题，不能在批处理文件<code>somefile.bat</code>正确使用<code>python somefile.py</code>来执行python程序。</p>
+
+<p>所以需要在bat文件中临时修改python环境变量。</p>
+
+<p>最终的bat文件如下：
+``` bat</p>
+
+<pre><code>@echo off 
+set PYPATH=C:\Python27;C:\Python27\Lib;C:\Python27\libs;C:\Python27\Tools\Scripts; 
+set path=%PYPATH%;%path% 
+@echo on
+
+python get_all_problems.py
+python get_need_solved.py
+python sort_problems.py
+
+pause
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>
