@@ -203,29 +203,33 @@
 
 <h3>配置内核</h3>
 
-<p>make menuconfig</p>
+<pre><code>make menuconfig
+</code></pre>
 
 <h3>编译内核和模块</h3>
 
 <p>依次执行如下命令：</p>
 
-<p>make
+<pre><code>make
 make modules
 make modules_install
-make install</p>
+make install
+</code></pre>
 
 <h2>使用make-kpkg</h2>
 
 <p>如果是ubuntu的用户，可以使用make-kpkg简化这个流程，而且还能带来额外的好处。
-在ubuntu下，安装kernel-package这个包之后，就可以使用make-kpkg了。</p>
+在ubuntu下，安装<code>kernel-package</code>这个包之后，就可以使用<code>make-kpkg</code>了。</p>
 
-<p>sudo apt-get install kernel-package</p>
+<pre><code>sudo apt-get install kernel-package
+</code></pre>
 
-<p>使用make-kpkg编译内核，第一个步骤“配置内核是必不可少的”，在这里，我比较建议在发行版默认的config的基础上再进行配置，这样配置出来的内核和发行版本身具有更好的相容性。比如ubuntu 14.10,可以在运行“make menuconfig”之前执行命令“cp /boot/config-3.13.0-44-generic .config”。</p>
+<p>使用make-kpkg编译内核，第一个步骤“配置内核是必不可少的”，在这里，我比较建议在发行版默认的config的基础上再进行配置，这样配置出来的内核和发行版本身具有更好的相容性。比如ubuntu 14.10,可以在运行<code>make menuconfig</code>之前执行命令<code>cp /boot/config-3.13.0-44-generic .config</code>。</p>
 
 <p>配置完内核后，接下来执行真正的编译过程。通常我们可以执行如下命令：</p>
 
-<p>make-kpkg  &#8211;initrd -j 8 &#8211;append-to-version -20150213001 kernel_image</p>
+<pre><code>make-kpkg  --initrd -j 8 --append-to-version -20150213001 kernel_image
+</code></pre>
 
 <ul>
 <li>&#8211;initrd选项会让make-kpkg自动帮助我们生成initramfs</li>
@@ -239,14 +243,17 @@ make install</p>
 
 <p>使用make-kpkg来编译内核，还有其他好处。因为我们是通过包管理器来安装新的内核，当不再需要这个内核时，就可以简单的通过dpkg命令、新立得软件包管理器或者Ubuntu软件中心来完全卸载，而不需要一个个手动删除修改。</p>
 
-<p>如果需要详细了解make-kpkg的用法，可以查阅manual:
-man make-kpkg</p>
+<p>如果需要详细了解<code>make-kpkg</code>的用法，可以查阅manual:</p>
+
+<pre><code>man make-kpkg
+</code></pre>
 
 <h2>TIPS</h2>
 
 <p>默认的config会编译很多模块，为了尽可能少的编译模块，在配置内核时，可以使用如下命令精简内核模块：</p>
 
-<p>make localmodconfig</p>
+<pre><code>make localmodconfig
+</code></pre>
 </div>
   
   
