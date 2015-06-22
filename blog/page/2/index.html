@@ -9,10 +9,12 @@
   <meta name="author" content="datawolf">
 
   
-  <meta name="description" content="安装和初始化 配置全局用户名和电子邮件地址 1
-2
-$ git config --global user.name &quot;yourname&quot;
-$ git config --global user.email &quot;yourname@mail.com&quot; &hellip;">
+  <meta name="description" content="历史 显示全部历史记录 1
+$ git log 显示版本历史，以及版本间的内容差异 1
+$ git log -p 只显示最近一个提交 1
+$ git log -1 显示最近的20个提交，以及版本间的内容差异 1
+$ git log -20 -p 显示最近6个小时的提交 1
+$ git log -- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +76,109 @@ $ git config --global user.email &quot;yourname@mail.com&quot; &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/01/git-xue-xi-bi-ji-2/">Git 学习笔记 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-01T14:14:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/01/git-xue-xi-bi-ji-2/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>历史</h1>
+
+<p>显示全部历史记录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示版本历史，以及版本间的内容差异</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -p
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>只显示最近一个提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示最近的20个提交，以及版本间的内容差异</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -20 -p
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示最近6个小时的提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --since<span class="o">=</span><span class="s2">&quot;6 hours&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示两天前的提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --before<span class="o">=</span><span class="s2">&quot;2 days&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示比HEAD（当前检出分支的末稍）早三个提交的那个提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1 HEAD~3
+</span><span class='line'><span class="nv">$ </span>git log -1 HEAD^^^
+</span><span class='line'><span class="nv">$ </span>git log -1 HEAD~1^^
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示两个版本直接的提交</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log &lt;start point&gt;...&lt;end point&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/01/git-xue-xi-bi-ji-2/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>

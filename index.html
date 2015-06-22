@@ -9,7 +9,7 @@
   <meta name="author" content="datawolf">
 
   
-  <meta name="description" content="曾几何时，笔者在使用ubuntu系统时，内核卡死，然后就束手无策了。只能去把电源来重启系统，但这是非常危险的，有可能会造成数据的丢失或者磁盘的损害。 幸好，使用sysrq组合键可以让系统安全的进行重启，并能收集一些系统的信息，方便问题的定位。 在终端上同时按Alt, &hellip;">
+  <meta name="description" content="每一次深入一个技术问题，随着挖掘的深入，都发现其背后总有非常深的背景知识，甚至需要深入很多底层系统，这个过程有时会让自己迷失，会让自己忘记了当初的目的。 前言 在讨论内核如何解析内核参数之前，我们先了解一下如何给内核参数。详细的内核参数的使用说明，请参加内核文档 Documentation/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +71,83 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/06/22/how-to-parse-linux-kernel-parameters/">How to Parse Linux Kernel Parameters</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-06-22T22:13:00+08:00" pubdate data-updated="true">Jun 22<span>nd</span>, 2015</time>
+        
+         | <a href="/blog/2015/06/22/how-to-parse-linux-kernel-parameters/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><blockquote><p>每一次深入一个技术问题，随着挖掘的深入，都发现其背后总有非常深的背景知识，甚至需要深入很多底层系统，这个过程有时会让自己迷失，会让自己忘记了当初的目的。</p></blockquote>
+
+
+<h2>前言</h2>
+
+<p>在讨论内核如何解析内核参数之前，我们先了解一下如何给内核参数。详细的内核参数的使用说明，请参加内核文档 <a href="http://lxr.free-electrons.com/source/Documentation/kernel-parameters.txt">Documentation/kernel-parameters.txt</a>，这里我简单总结如下：</p>
+
+<p>假如有如下的cmdline传递给内核</p>
+
+<pre><code>mem=900M console=ttyS0,115200 foo=1 bar ramoops.size=0x8000 earlyprintk -- msg=hello test
+</code></pre>
+
+<ol>
+<li>内核只解析<code>--</code>字符以前的参数。</li>
+<li><code>--</code>字符以后的参数，都会传递给init进程。</li>
+<li>如果内核遇到不能识别的参数时，且该参数中没有包含字符<code>.</code>，内核将会把它传递给init进程，如果参数中有<code>=</code>字符时，内核会将该参数传递给init进程作为其环境变量。</li>
+<li>模块可以通过两种方式传递参数：一个是命令行，一个是modprobe。
+
+<pre><code> (kernel command line) usbcore.blinkenlights=1
+ (modprobe command line) modprobe usbcore blinkenlights=1
+</code></pre></li>
+<li>编译进内核的模块，需要使用命令行的方式给其传递参数。</li>
+<li>modprobe在加载内核模块时，会去查找<code>/proc/cmdline</code>来收集模块的参数，所以未编译进内核的可加载的模块也可以使用命令行来传递参数。</li>
+<li>内核参数中，中划线<code>-</code>和下划线<code>_</code>时等价的，例如，如下的两个参数时等价的
+
+<pre><code> log_buf_len=1M print-fatal-signals=1
+ log-buf-len=1M print_fatal_signals=1
+</code></pre></li>
+<li>如果参数的值中有空格，可以使用双引号将其包住，例如：
+
+<pre><code> param="spaces in here"
+</code></pre></li>
+</ol>
+
+
+<h2>第一个阶段</h2>
+
+<h2>第二个阶段</h2>
+
+<h2>第三个阶段</h2>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -984,109 +1061,6 @@ make install
 
 </div>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/01/git-xue-xi-bi-ji-2/">Git 学习笔记 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-01T14:14:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2013</time>
-        
-         | <a href="/blog/2013/04/01/git-xue-xi-bi-ji-2/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>历史</h1>
-
-<p>显示全部历史记录</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>显示版本历史，以及版本间的内容差异</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -p
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>只显示最近一个提交</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>显示最近的20个提交，以及版本间的内容差异</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -20 -p
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>显示最近6个小时的提交</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --since<span class="o">=</span><span class="s2">&quot;6 hours&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>显示两天前的提交</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log --before<span class="o">=</span><span class="s2">&quot;2 days&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>显示比HEAD（当前检出分支的末稍）早三个提交的那个提交</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log -1 HEAD~3
-</span><span class='line'><span class="nv">$ </span>git log -1 HEAD^^^
-</span><span class='line'><span class="nv">$ </span>git log -1 HEAD~1^^
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>显示两个版本直接的提交</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git log &lt;start point&gt;...&lt;end point&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/01/git-xue-xi-bi-ji-2/">Read on &rarr;</a>
-    </footer>
   
 
 

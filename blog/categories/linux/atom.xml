@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: linux | Linux Primer]]></title>
+  <title><![CDATA[Category: Linux | Linux Primer]]></title>
   <link href="http://datawolf.github.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://datawolf.github.com/"/>
-  <updated>2015-06-22T22:03:42+08:00</updated>
+  <updated>2015-06-22T23:04:53+08:00</updated>
   <id>http://datawolf.github.com/</id>
   <author>
     <name><![CDATA[datawolf]]></name>
@@ -14,484 +14,198 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Linux 时钟和定时器]]></title>
-    <link href="http://datawolf.github.com/blog/2013/06/01/linux-shi-zhong-he-ding-shi-qi/"/>
-    <updated>2013-06-01T19:38:00+08:00</updated>
-    <id>http://datawolf.github.com/blog/2013/06/01/linux-shi-zhong-he-ding-shi-qi</id>
-    <content type="html"><![CDATA[<h2>时钟</h2>
-
-<p>时钟这个东西，实际上是作为一种工具而存在，内核通过时钟来感知、管理时间。这里的时钟，更主要的还是<strong>软件上的概念</strong>，系统通过维护软件时钟来追踪时间。</p>
-
-<h3>概念</h3>
+    <title type="html"><![CDATA[Linux世界里的时间]]></title>
+    <link href="http://datawolf.github.com/blog/2013/05/26/linuxshi-jie-li-de-shi-jian/"/>
+    <updated>2013-05-26T20:33:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2013/05/26/linuxshi-jie-li-de-shi-jian</id>
+    <content type="html"><![CDATA[<p>通常，操作系统可以使用三种方法来表示系统的当前时间与日期：</p>
 
 <ol>
-<li><strong>时钟中断</strong>：由硬件产生的电信号，一切的缘起。该中断产生时，内核通过特殊的中断处理程序进行处理。</li>
-<li><strong>节拍率</strong>（tick rate）：系统以某种频率（可编程）自行触发（hitting、popping）时钟中断（即系统定时器的频率）。</li>
-<li><strong>节拍</strong>（tick）：由于节拍率已知，系统当然也知道两次时钟中断之间所间隔的时间，这个时间就是时钟节拍。</li>
+<li>简单的一种方法就是直接用一个64位的计数器来对<strong>时钟滴答</strong>进行计数。</li>
+<li>第二种方法就是用一个32位计数器来对<strong>秒</strong>进行计数，同时还用一个32位的辅助计数器对时钟滴答计数，直至累积到一秒为止。因为23<sup>2超过136年，因此这种方法直至22世纪都可以让系统工作得很好。</sup></li>
+<li>第三种方法也是按<strong>时钟滴答</strong>进行计数，但是是相对于系统启动以来的滴答次数，而不是相对于某个确定的外部时刻；当读外部后备时钟（如RTC）或用户输入实际时间时，根据当前的滴答次数计算系统当前时间。</li>
 </ol>
 
 
-<h3>再说节拍率：HZ</h3>
+<h2>基本概念</h2>
 
-<p><strong>节拍率</strong>，即系统定时器的频率，在内核中通过<code>HZ</code>这个宏进行定义。在进行内核编程的时候，切记不要假设<code>HZ</code>不会发生变化，事实上，大多数体系结构的HZ都是可调的。</p>
+<p>首先，有必要明确一些Linux内核时钟驱动中的基本概念。</p>
 
-<p><code>HZ</code>的理想取值：从2.5内核开始，这个取值在i386体系结构中就改为了<code>1000</code>（2.6.13版本后的内核，加入了250这个取值）。改变HZ的取值，对于操作系统而言，意味着改变时钟中断的频率：</p>
+<h3>时钟周期的频率</h3>
 
-<p> <strong>增大HZ</strong>：提高时钟中断的频率，这带来的好处是，提高了时间驱动事件的解析度与精确度,内核定时器具有更高的频度与精确度（依赖内核定时器的系统调用也有了更精确的执行度，比如select、epoll等，这会带来很大的性能提升），时间相关的测量会更准确，内核抢占更准确，进程调度的响应更及时。</p>
+<p>时钟周期（clock cycle）的频率：<code>8253／8254 PIT</code>的本质就是对由晶体振荡器产生的
+时钟周期进行计数，<strong>晶体振荡器在1秒时间内产生的时钟脉冲个数就是时钟周期的频率</strong>。</p>
 
-<p>当然也会有负面影响：更高的中断频率，必然会导致系统消耗更多的资源来处理时钟中断（当然，就目前的主机来说，<code>1000</code>还是一个不错的取值）。</p>
-
-<p>2.6的内核允许在编译的时候，选择不同的HZ取值，用户空间的<code>USER_HZ</code>，是根据内核的<code>HZ</code>进行了相应的转换。</p>
-
-<p>最后顺便说一下，OS也是可以采取无节拍的实现的，但系统的开销会非常大。</p>
-
-<h3>jiffies</h3>
-
-<p>变量类型为<code>unsigned long volatile</code>，该变量记录了系统启动以来，产生的<code>tick</code>总数，<code>系统运行时间 = jiffies/HZ</code> 。</p>
-
-<p>下面是几个典型运用：
+<p>Linux用宏<code>CLOCK_TICK_RATE</code>来表示<code>8254 PIT</code>的输入时钟脉冲的频率,该宏定义在<code>arch/x86/include/asm/timex.h</code>头文件中：
 ``` c</p>
 
-<pre><code>unsigned long timestamp = jiffies
-unsigned long nextTick = jiffies + 1
-unsigned long 5sLater = jiffies + 5*HZ
+<pre><code>./arch/x86/include/asm/timex.h:8:#define CLOCK_TICK_RATE  PIT_TICK_RATE
+./include/linux/timex.h:153:#define PIT_TICK_RATE 1193182ul
 </code></pre>
 
 <p>```</p>
+
+<h3>时钟滴答</h3>
+
+<p>时钟滴答（clock tick）：当PIT通道0的计数器减到0值时，它就在<code>IRQ0</code>上产生一次时钟中断，也即一次<strong>时钟滴答</strong>。PIT通道0的计数器的初始值决定了要过多少时钟周期才产生一次时钟中断，因此也就决定了一次时钟滴答的时间间隔长度。</p>
+
+<h3>时钟滴答的频率</h3>
+
+<p>时钟滴答的频率（HZ）：即<strong>1秒时间内PIT所产生的时钟滴答次数</strong>。类似地，这个值也是由PIT通道0的计数器初值决定的（反过来说，确定了时钟滴答的频率值后也就可以确定8254 PIT通道0的计数器初值）。</p>
+
+<p>Linux内核用宏<code>HZ</code>来表示时钟滴答的频率，而且在不同的平台上<code>HZ</code>有不同的定义值。对于ALPHA和IA62平台HZ的值是1024，对于SPARC、MIPS、ARM和i386等平台<code>HZ</code>的值都是100。该宏在i386平台上的定义如下:
+``` c</p>
+
+<pre><code>#ifndef HZ 
+#define HZ 100 
+#endif 
+</code></pre>
+
+<p><code>``
+根据</code>HZ`的值，我们也可以知道一次时钟滴答的具体时间间隔应该是（1000ms／HZ）＝10ms。</p>
 
 <!-- more -->
 
 
-<p>作为<code>unsigned long</code>，在64位机上是不会溢出的。而在32位机上，当<code>HZ=1000</code>时，49.7天将发生溢出，会进行所谓的回绕，下面是几个处理回绕的宏(<code>include/linux/jiffies.h</code>)：
+<h3>时钟滴答的时间间隔</h3>
+
+<p>时钟滴答的时间间隔：Linux用全局变量<code>tick</code>来表示时钟滴答的时间间隔长度，该变量定义在<code>kernel/timer.</code>c文件中，如下：
 ``` c</p>
 
-<pre><code>/*
- *  These inlines deal with timer wrapping correctly. You are
- *  strongly encouraged to use them
- *  1. Because people otherwise forget
- *  2. Because if the timer wrap changes in future you won't have to
- * alter your driver code.
- *
- * time_after(a,b) returns true if the time a is after time b.
- *
- * Do this with "&lt;0" and "&gt;=0" to only test the sign of the result. A
- * good compiler would generate better code (and a really good compiler
- * wouldn't care). Gcc is currently neither.
- */
-#define time_after(a,b) \
-    (typecheck(unsigned long, a) &amp;&amp; \
-     typecheck(unsigned long, b) &amp;&amp; \
-     ((long)(b) - (long)(a) &lt; 0))
-#define time_before(a,b)time_after(b,a)
-
-#define time_after_eq(a,b)  \
-    (typecheck(unsigned long, a) &amp;&amp; \
-     typecheck(unsigned long, b) &amp;&amp; \
-     ((long)(a) - (long)(b) &gt;= 0))
-#define time_before_eq(a,b) time_after_eq(b,a)
-
-/*
- * Calculate whether a is in the range of [b, c].
- */
-#define time_in_range(a,b,c) \
-    (time_after_eq(a,b) &amp;&amp; \
-    time_before_eq(a,c))
-
-/*
- * Calculate whether a is in the range of [b, c).
- */
-#define time_in_range_open(a,b,c) \
-    (time_after_eq(a,b) &amp;&amp; \
-     time_before(a,c))
-
-/* Same as above, but does so with platform independent 64bit types.
- * These must be used when utilizing jiffies_64 (i.e. return value of
- * get_jiffies_64() */
-#define time_after64(a,b)   \
-    (typecheck(__u64, a) &amp;&amp; \
-    typecheck(__u64, b) &amp;&amp; \
-    ((__s64)(b) - (__s64)(a) &lt; 0))
-#define time_before64(a,b)  time_after64(b,a)
-
-#define time_after_eq64(a,b)\
-    (typecheck(__u64, a) &amp;&amp; \
-     typecheck(__u64, b) &amp;&amp; \
-    ((__s64)(a) - (__s64)(b) &gt;= 0))
-#define time_before_eq64(a,b)   time_after_eq64(b,a)
-
-/*
- * These four macros compare jiffies and 'a' for convenience.
- */
-
-/* time_is_before_jiffies(a) return true if a is before jiffies */
-#define time_is_before_jiffies(a) time_after(jiffies, a)
-
-/* time_is_after_jiffies(a) return true if a is after jiffies */
-#define time_is_after_jiffies(a) time_before(jiffies, a)
-
-/* time_is_before_eq_jiffies(a) return true if a is before or equal to jiffies*/
-#define time_is_before_eq_jiffies(a) time_after_eq(jiffies, a)
-
-/* time_is_after_eq_jiffies(a) return true if a is after or equal to jiffies*/
-#define time_is_after_eq_jiffies(a) time_before_eq(jiffies, a)
-</code></pre>
-
-<p>```</p>
-
-<h2>时间</h2>
-
-<p>讲Linux系统编程的书，都要讲时间以及相关接口，因为这个概念是不可或缺的，许多功能都需要时间进行支撑。</p>
-
-<h3>几个时间</h3>
-
-<ol>
-<li><strong>墙上时间</strong>：墙上挂钟的时间，即真是时间。用户级进程一般使用该时间。</li>
-<li><strong>进程时间</strong>：进程消耗的时间，包括用户空间的和内核空间的，一般在对程序进行分析、统计的时候使用。</li>
-<li><strong>单调时间</strong>：保持稳定线性递增的时间，其重要性不在于绝对值是多少，而在于通过多次采样并计算相对时间。单调时间不会因为墙上时间的改变而受到影响。</li>
-</ol>
-
-
-<p>系统衡量这几个时间的方式有两个：<strong>绝对时间</strong>，<strong>相对时间</strong></p>
-
-<h3>POSIX时钟</h3>
-
-<p><code>POSIX</code>定义了若干种时钟，这些<code>POSIX</code>时钟其实是指的<strong>实现和表示时间源的标准</strong>，Linux支持以下四种：</p>
-
-<p><code>MONOTONIC</code>：不可被设置的，单调增长的时钟</p>
-
-<p><code>PROCESS_CPUTIME_ID</code>：系统为每进程提供的高精度时钟</p>
-
-<p><code>REALTIME</code>：墙上时钟，设置需要root权限  （必须实现的）</p>
-
-<p><code>THREAD_CPUTIME_ID</code>：系统为每线程提供的高精度时钟
-``` c</p>
-
-<pre><code>/*
- * The IDs of the various system clocks (for POSIX.1b interval timers):
- */
-#define CLOCK_REALTIME                  0
-#define CLOCK_MONOTONIC                 1
-#define CLOCK_PROCESS_CPUTIME_ID        2
-#define CLOCK_THREAD_CPUTIME_ID         3
-#define CLOCK_MONOTONIC_RAW             4
-#define CLOCK_REALTIME_COARSE           5
-#define CLOCK_MONOTONIC_COARSE          6
-#define CLOCK_BOOTTIME                  7
-#define CLOCK_REALTIME_ALARM            8
-#define CLOCK_BOOTTIME_ALARM            9
-</code></pre>
-
-<p>```</p>
-
-<h2>延迟执行</h2>
-
-<p>Linux系统提供了许多种让任务延后执行的方法，我们最为熟悉的自然是定时器了，但在细说定时器之前，我们也有必要了解其他的延迟机制。</p>
-
-<h3>忙等待</h3>
-
-<p><strong>忙等待</strong>的原理最简单：通过不断的循环，直到经过了设定的时钟节拍。</p>
-
-<p>下面是其典型示例：
-``` c</p>
-
-<pre><code>unsigned long  delay  =  jiffies + 100;
-While (time_before (jiffies , delay ));
+<pre><code>long tick = (1000000 + HZ/2) / HZ; /* timer interrupt period */ 
 </code></pre>
 
 <p><code>``
-忙等待唯一的优点就是实现简单了，但是缺点却有一箩筐</code>精度低、等待时占用CPU资源等。因此我们一般不会在正式的代码中发现它的身影。</p>
+</code>tick<code>变量的单位是**微妙**（μs），由于在不同平台上宏HZ的值会有所不同，因此方程式tick＝1000000÷HZ的结果可能会是个小数，因此将其进行四舍五入成一个整数，所以Linux将</code>tick<code>定义成（1000000＋HZ／2）／HZ，其中被除数表达式中的HZ／2的作用就是用来将</code>tick`值向上圆整成一个整型数。</p>
 
-<h3>短延迟</h3>
+<p>另外，Linux还用宏<code>TICK_SIZE</code>来作为tick变量的引用别名（alias），其定义如下（<code>arch／i386/kernel/time.c</code>）：
+``` c</p>
 
-<p>内核提供一种<strong>微秒级</strong>的循环等待机制，其原理是：<strong>内核知道系统每秒能够执行多少次循环，然后通过执行特定次数的循环来达到延时的目的</strong></p>
-
-<p>接口：<code>udelay() / mdelay()</code>  入参均为微秒/毫秒数，并不使用<code>jiffies</code></p>
-
-<p>这里有一个相关变量：<code>BogoMIPS</code> ，该变量记录的是，处理器在给定时间内忙循环执行的次数，主要就是被上述2个接口使用。</p>
-
-<h3>在等待队列上睡眠</h3>
-
-<p>在学习进程的时候，我们已经知道当进程等待某个事件的发生时，是能够将自己挂起的，即将自己加入等待队列中。这就是系统提供的第三种延迟机制。</p>
-
-<p>在学习进程时，我们知道了schedule()，这里对应的会有schedule_timeout()，顾名思义，该调用与时间有关：作用是在等待队列上睡眠指定的时间（精度为节拍）。使用这个机制时，需要首先设置进程状态为<code>TASK_INTERRUPTIBLE</code>(处理信号 )/ <code>TASK_UNINTERRUPTIBLE</code>(不处理信号)，否则进程不会睡眠</p>
-
-<h2>Linux定时器</h2>
-
-<h3>Linux提供的睡眠系统调用——临时定时器</h3>
-
-<p>Linux提供了几个睡眠的系统调用
-```</p>
-
-<pre><code>sleep()             // s
-usleep()            // us
-nanosleep()         // ns
-clock_nanosleep()   // POSIX规范接口，更高级，提供各种类型的定时器
-</code></pre>
-
-<p>```
-另外，应该知道的是，select调用也是能够实现微秒级的定时器的 ，而且移植性较好。</p>
-
-<p>同时在调用这些接口时，需要处理返回值或者errno，以提高程序的健壮性，比如睡眠被信号打断这类的事件。</p>
-
-<h3>进程唯一的实时定时器</h3>
-
-<p>对于进程唯一的实时定时器的使用，系统提供了两类接口：<code>alarm/ualarm</code>，以及 <code>getitimer/setitimer</code></p>
-
-<p>前者(<code>alarm/ualarm</code>)是简单的小闹钟，结合信号量使用，精确度在秒级。</p>
-
-<p>后者(<code>getitimer/setitimer</code>)则更为高级，其提供了3种工作模式，能够较好的过滤掉诸如上下文切换带来的统计误差：
-```</p>
-
-<pre><code>REAL：记录墙上时间的流逝（SIGALARM）
-VIRTUAL：只记录进程空间的时间流逝（SIGVTALARM）
-PROF：在进程执行以及内核为进程服务时，记录时间的流逝（SIGPROF）
+<pre><code>#define TICK_SIZE tick 
 </code></pre>
 
 <p>```</p>
 
-<h3>POSIX实时扩展定时器</h3>
+<h3>宏LATCH</h3>
 
-<p>如果需要更高的时间精度，或者需要多个定时器，那么每个进程一个的实时间隔定时器就无能为力了，这个时候我们可以选择<code>POSIX实时扩展中的定时器</code>：
+<p>宏LATCH：Linux用宏<code>LATCH</code>来定义<strong>要写到PIT通道0的计数器中的值</strong>，它表示PIT将每隔多少个时钟周期产生一次时钟中断。显然LATCH应该由下列公式计算：</p>
+
+<pre><code>LATCH＝（1秒之内的时钟周期个数）÷（1秒之内的时钟中断次数）＝（CLOCK_TICK_RATE）÷（HZ） 
+</code></pre>
+
+<p>类似地，上述公式的结果可能会是个小数，应该对其进行四舍五入。所以，Linux将<code>LATCH</code>定义为（<code>/include/linux/jiffies.h</code>）：
 ``` c</p>
 
-<pre><code>int timer_create(clockid_t clockid, 
-            struct sigevent *restrict evp,
-            timer_t *restrict timerid);
-int timer_getoverrun(timer_t timerid);
-int timer_gettime(timer_t timerid, struct itimerspec *value);
-int timer_settime(timer_t timerid, int flags,
-            const struct itimerspec *restrict value,
-            struct itimerspec *restrict ovalue);
+<pre><code>./include/linux/jiffies.h:54:/* LATCH is used in the interval timer and ftape setup. */
+./include/linux/jiffies.h:55:#define LATCH ((CLOCK_TICK_RATE + HZ/2) / HZ)  /* For divider */
 </code></pre>
 
 <p><code>``
-它实际上就是**进程间隔定时器**的增强版，除了可以定制时钟源（nanosleep也存在能定制时钟源的版本：clock_nanosleep）和时间精度提高到纳秒外，它还能通过将</code>evp->sigev_notify`设定为如下值来定制定时器到期后的行为：</p>
+类似地，被除数表达式中的HZ／2也是用来将</code>LATCH`向上圆整成一个整数。</p>
 
-<ol>
-<li><strong>SIGEV_SIGNAL</strong>：发送由<code>evp-&gt;sigev_sino</code>指定的信号到调用进程，<code>evp-&gt;sigev_value</code>的值将被作为<code>siginfo_t</code>结构体中<code>si_value</code>的值。</li>
-<li><strong>SIGEV_NONE</strong>：什么都不做，只提供通过<code>timer_gettime</code>和<code>timer_getoverrun</code>查询超时信息。</li>
-<li><strong>SIGEV_THREAD</strong>：以<code>evp-&gt;sigev_notification_attributes</code>为线程属性创建一个线程，在新建的线程内部以<code>evp-&gt;sigev_value</code>为参数调用<code>evp-&gt;sigev_notification_function</code>。</li>
-<li><strong>SIGEV_THREAD_ID</strong>：和<code>SIGEV_SIGNAL</code>类似，不过它只将信号发送到线程号为<code>evp-&gt;sigev_notify_thread_id</code>的线程，注意：这里的线程号不一定是<code>POSIX</code>线程号，而是线程调用<code>gettid</code>返回的实际线程号,并且这个线程必须实际存在且属于当前的调用进程。</li>
-</ol>
+<h2>时间的内核数据结构</h2>
 
+<p>作为一种UNIX类操作系统，Linux内核显然采用本文开始所述的第三种方法来表示系统的当前时间。Linux内核在表示系统当前时间时用到了三个重要的数据结构：</p>
 
-<h3>其它问题</h3>
+<h3>全局变量jiffies</h3>
 
-<h4>更高的时间精度</h4>
+<p><strong>全局变量jiffies</strong>：这是一个32位的无符号整数，用来表示自内核上一次启动以来的时钟滴答次数。每发生一次时钟滴答，内核的时钟中断处理函数<code>timer_interrupt()</code>都要将该全局变量<code>jiffies</code>加1。</p>
 
-<p>从前面的描述我们可以发现，Linux定时器很多都是基于时钟节拍的，那么当<code>HZ</code>较低比如100时，其节拍精度仅为10毫秒，那么显然对于一个想要在1毫秒级精度进行睡眠的进程而言，这个精度是无法容忍的，我们可以考虑适当提高<code>H</code>Z取值。</p>
+<p>该变量定义在<code>include/linux/jiffies.h</code>源文件中，如下所示：
+``` c</p>
 
-<p>另外，Linux的API暗示它能够提供<strong>纳秒级</strong>的时间精度，但是，由于种种不确定因素，它实际上并不能提供纳秒级的精度，比较脆弱。如果你需要更高强度的实时性，请考虑采用软实时系统、硬实时系统、专有系统，甚至是专业硬件。</p>
-
-<h4>传统信号的不可靠性</h4>
-
-<p>传统UNIX信号是不可靠的，也就是说如果当前的信号没有被处理，那么后续的同类信号将被丢失，而不是被排队，而实时信号则没有这个问题，它是被排队的。联系到当前应用，如果信号丢失，则是因为任务消耗了过多的处理器时间，而这个不确定性是那个任务带来的，需要改进的应该是那个任务。</p>
-
-<h4>系统负载过高</h4>
-
-<p>如果系统的负载过高，使得我们的程序因为不能得到及时的调度导致时间精度降低，我们不妨通过<code>nice</code>提高当前程序的优先级，必要时可以通过<code>sched_setscheduler</code>将当前进程切换成优先级最高的实时进程以确保得到及时调度。</p>
-
-<h4>硬件相关的问题</h4>
-
-<p>硬件配置也极大的影响着定时器的精度，有的比较老的遗留系统可能没有比较精确的硬件定时器，那样的话我们就无法期待它能提供多高的时钟精度了。相反，如果系统的配置比较高，比如说对称多处理系统，那么即使有的处理器负载比较高，我们也能通过将一个处理器单独分配出来处理定时器来提高定时器的精度。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[which 命令分析]]></title>
-    <link href="http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi/"/>
-    <updated>2013-04-14T17:03:00+08:00</updated>
-    <id>http://datawolf.github.com/blog/2013/04/14/which-ming-ling-fen-xi</id>
-    <content type="html"><![CDATA[<h2>环境</h2>
-
-<p>Linux 3.2.0-40-generic #64-Ubuntu SMP Mon Mar 25 21:22:10 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux</p>
-
-<h3>which 命令的位置</h3>
-
-<p><code>bash
-datawolf@datawolf-ThinkPad-Edge:~$ which -a which
-/usr/bin/which
-/bin/which
-</code></p>
-
-<h3>分析两个which文件的类型</h3>
-
-<p>通过以下shell命令可以看出，<code>/usr/bin/which</code>是一个指向<code>/bin/which</code>的符号链接。而<code>/bin/which</code>是一个shell脚本。
-<code>bash
-datawolf@datawolf-ThinkPad-Edge:~$ ls -al  /usr/bin/which /bin/which
--rwxr-xr-x 1 root root 946 Mar 30  2012 /bin/which
-lrwxrwxrwx 1 root root  10 Feb 21 16:23 /usr/bin/which -&gt; /bin/which
-datawolf@datawolf-ThinkPad-Edge:~$ file /usr/bin/which
-/usr/bin/which: symbolic link to `/bin/which'
-datawolf@datawolf-ThinkPad-Edge:~$ file /bin/which
-/bin/which: POSIX shell script, ASCII text executable
-</code></p>
-
-<!-- more -->
-
-
-<h3>/bin/which 文件分析</h3>
-
-<p><strong>which</strong>命令的原理：该命令在系统<code>$PATH</code>环境变量指向的目录中，寻找是否有指定的可执行的命令。
-其用发如下：
-<code>bash
-$ which -a ping # 寻找所有的ping命令在系统中的路径位置
-$ which ping # 寻找第一个ping命令在系统中的路径位置
-</code>
-<strong>which</strong>命令的源代码如下：
-``` bash</p>
-
-<h1>!/bin/sh</h1>
-
-<h1>-e 如果命令带非0返回值，立即退出</h1>
-
-<h1>-f 禁止带扩展名的路径</h1>
-
-<p>set -ef</p>
-
-<h1>$KSH_VERSION变量表示ksh的版本</h1>
-
-<p>if test -n "$KSH_VERSION"; then</p>
-
-<pre><code>puts() {
-    print -r -- "$*"
-}
+<pre><code>  /*
+   * The 64-bit value is not atomic - you MUST NOT read it
+   * without sampling the sequence number in jiffies_lock.
+   * get_jiffies_64() will do this for you as appropriate.
+   */
+  extern u64 __jiffy_data jiffies_64;
+  extern unsigned long volatile __jiffy_data jiffies;
 </code></pre>
 
-<p>else</p>
+<p><code>``
+C语言限定符</code>volatile<code>表示</code>jiffies`是一个易该变的变量，因此编译器将使对该变量的访问从不通过CPU内部cache来进行。</p>
 
-<pre><code>puts() {
-    printf '%s\n' "$*"
-}
+<p><code>__jiffy_data</code>的定义如下：
+``` c</p>
+
+<pre><code>  /* some arch's have a small-data section that can be accessed register-relative
+   * but that can only take up to, say, 4-byte variables. jiffies being part of
+   * an 8-byte variable may not be correctly accessed unless we force the issue
+   */
+  #define __jiffy_data  __attribute__((section(".data")))
 </code></pre>
-
-<p>fi</p>
-
-<p>ALLMATCHES=0</p>
-
-<h1>查找是否有选项-a</h1>
-
-<h1>如果有选项-a，打印所有匹配的命令，否则打印第一个匹配的命令</h1>
-
-<p>while getopts a whichopts
-do</p>
-
-<pre><code>    case "$whichopts" in
-            a) ALLMATCHES=1 ;;
-            ?) puts "Usage: $0 [-a] args"; exit 2 ;;
-    esac
-</code></pre>
-
-<p>done</p>
-
-<h1>shift n 表示将原来的位置参数左移n位。</h1>
-
-<h1>$OPTIND 代表下一个待处理的参数的索引</h1>
-
-<p>shift $(($OPTIND - 1))</p>
-
-<h1>$#标表示参数的个数</h1>
-
-<p>if [ "$#" -eq 0 ]; then
- ALLRET=1
-else
- ALLRET=0
-fi
-case $PATH in</p>
-
-<pre><code>(*[!:]:) PATH="$PATH:" ;;
-</code></pre>
-
-<p>esac</p>
-
-<h1>$@代表输入的所有的命令行参数</h1>
-
-<h1>$IFS表示bash内部的域分割符。默认值为空格</h1>
-
-<h1>[-f "filename"] 判断是否是一个文件</h1>
-
-<h1>[-x "filename"] 判断文件是否具有可执行权限</h1>
-
-<h1>[-z "str"] 判断字符串长度是否为0</h1>
-
-<p>#</p>
-
-<p>for PROGRAM in "$@"; do
- RET=1
- IFS_SAVE="$IFS"
- IFS=:</p>
-
-<h1>该程序首先判断具有全部路径的命令是否存在，比如这样使用： which /usr/bin/ls</h1>
-
-<h1>如果当使用如下时： which ls 该程序将在系统$PATH的路径下寻找相应的程序。</h1>
-
-<p> case $PROGRAM in
-  <em>/</em>)
-   if [ -f "$PROGRAM" ] &amp;&amp; [ -x "$PROGRAM" ]; then</p>
-
-<pre><code>puts "$PROGRAM"
-RET=0
-</code></pre>
-
-<p>   fi
-   ;;
-  *)
-   for ELEMENT in $PATH; do</p>
-
-<pre><code>if [ -z "$ELEMENT" ]; then
- ELEMENT=.
-fi
-if [ -f "$ELEMENT/$PROGRAM" ] &amp;&amp; [ -x "$ELEMENT/$PROGRAM" ]; then
- puts "$ELEMENT/$PROGRAM"
- RET=0
- [ "$ALLMATCHES" -eq 1 ] || break
-fi
-</code></pre>
-
-<p>   done
-   ;;
- esac
- IFS="$IFS_SAVE"
- if [ "$RET" -ne 0 ]; then
-  ALLRET=1
- fi
-done</p>
-
-<p>exit "$ALLRET"</p>
 
 <p>```</p>
 
-<h3>CentOS 中的which命令</h3>
+<h3>全局变量xtime</h3>
 
-<h4>环境</h4>
+<p><strong>全局变量xtime</strong>：它是一个<code>timeval</code>结构类型的变量，用来表示当前时间距UNIX时间基准
+1970－01－01 00：00：00的<strong>相对秒数值</strong>。结构<code>timeval</code>是Linux内核表示时间的一种格式
+（Linux内核对时间的表示有多种格式，每种格式都有不同的时间精度），其时间精度是<strong>微秒</strong>。
+该结构是内核表示时间时最常用的一种格式，它定义在头文件<code>include/uapi/linux/time.h</code>中，
+如下所示：
+``` c</p>
 
-<p>Linux 2.6.32-220.17.1.el6.x86_64 #1 SMP Wed May 16 00:01:37 BST 2012 x86_64 x86_64 x86_64 GNU/Linux</p>
-
-<p>which - shows the full path of (shell) commands</p>
-
-<p>Which takes one or more arguments. For each of its arguments it prints to stdout the full path of the executables that would have been executed when this argument had been entered at the shell prompt. It does this by searching for an executable or script in the directories listed in the environment variable PATH using the same algorithm as bash(1)</p>
-
-<h4>在CentOS下，which是c语言写的</h4>
-
-<p>``` bash
-[wanglong@wanglong ~]$ which -a which
-alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'</p>
-
-<pre><code>/usr/bin/which
+<pre><code>struct timeval {
+        __kernel_time_t    tv_sec; /* seconds */
+        __kernel_suseconds_t    tv_usec;/* microseconds */
+  };
 </code></pre>
 
-<p>/usr/bin/which
-[wanglong@wanglong ~]$ file /usr/bin/which
-/usr/bin/which: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.18, stripped
-[wanglong@wanglong ~]$ ldd /usr/bin/which</p>
+<p><code>
+`__kernel_time_t`的定义如下：
+</code> c</p>
 
-<pre><code>linux-vdso.so.1 =&gt;  (0x00007fff74fff000)
-libc.so.6 =&gt; /lib64/libc.so.6 (0x0000003250400000)
-/lib64/ld-linux-x86-64.so.2 (0x0000003250000000)
+<pre><code>typedef __kernel_long_t __kernel_time_t;
+typedef long long __kernel_long_t;
 </code></pre>
 
-<p>[wanglong@wanglong ~]$
-```</p>
+<p>```</p>
+
+<p><code>__kernel_suseconds_t</code>的定义如下：
+``` c</p>
+
+<pre><code>#ifndef __kernel_suseconds_t
+  typedef __kernel_long_t         __kernel_suseconds_t;
+#endif
+typedef long long __kernel_long_t;
+</code></pre>
+
+<p><code>
+其中，成员`tv_sec`表示当前时间距UNIX时间基准的秒数值，而成员`tv_usec`则表示一秒之内的
+微秒值，且`1000000&gt;tv_usec&gt;＝0`。Linux内核通过`timeval`结构类型的全局变量`xtime`来维持当前时间，该变量定义在`kernel/timer.c`文件中，如下所示：
+</code> c</p>
+
+<pre><code>/* The current time */ 
+volatile struct timeval xtime __attribute__ ((aligned (16))); 
+</code></pre>
+
+<p>```</p>
+
+<h3>全局变量sys_tz</h3>
+
+<p><strong>全局变量sys_tz</strong>：它是一个<code>timezone</code>结构类型的全局变量，表示系统当前的时区信息。结构类型<code>timezone</code>定义在<code>include/uapi/linux/time.h</code>头文件中，如下所示:
+``` c</p>
+
+<pre><code>  struct timezone {
+          int     tz_minuteswest; /* minutes west of Greenwich */
+          int     tz_dsttime;     /* type of dst correction */
+  };
+</code></pre>
+
+<p><code>
+基于上述结构，Linux在`kernel/time.c`文件中定义了全局变量`sys_tz`表示系统当前所处的时区信息，如下所示：
+</code> c</p>
+
+<pre><code>  /*
+   * The timezone where the local system is located.  Used as a default by some
+   * programs who obtain this value by using gettimeofday.
+   */
+  struct timezone sys_tz;
+</code></pre>
+
+<p>````</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: kernel | Linux Primer]]></title>
+  <link href="http://datawolf.github.com/blog/categories/kernel/atom.xml" rel="self"/>
+  <link href="http://datawolf.github.com/"/>
+  <updated>2015-06-22T23:04:53+08:00</updated>
+  <id>http://datawolf.github.com/</id>
+  <author>
+    <name><![CDATA[datawolf]]></name>
+    <email><![CDATA[datawolf@laoqinren.net]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to parse linux kernel parameters]]></title>
+    <link href="http://datawolf.github.com/blog/2015/06/22/how-to-parse-linux-kernel-parameters/"/>
+    <updated>2015-06-22T22:13:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2015/06/22/how-to-parse-linux-kernel-parameters</id>
+    <content type="html"><![CDATA[<p><blockquote><p>每一次深入一个技术问题，随着挖掘的深入，都发现其背后总有非常深的背景知识，甚至需要深入很多底层系统，这个过程有时会让自己迷失，会让自己忘记了当初的目的。</p></blockquote></p>
+
+<h2>前言</h2>
+
+<p>在讨论内核如何解析内核参数之前，我们先了解一下如何给内核参数。详细的内核参数的使用说明，请参加内核文档 <a href="http://lxr.free-electrons.com/source/Documentation/kernel-parameters.txt">Documentation/kernel-parameters.txt</a>，这里我简单总结如下：</p>
+
+<p>假如有如下的cmdline传递给内核</p>
+
+<pre><code>mem=900M console=ttyS0,115200 foo=1 bar ramoops.size=0x8000 earlyprintk -- msg=hello test
+</code></pre>
+
+<ol>
+<li>内核只解析<code>--</code>字符以前的参数。</li>
+<li><code>--</code>字符以后的参数，都会传递给init进程。</li>
+<li>如果内核遇到不能识别的参数时，且该参数中没有包含字符<code>.</code>，内核将会把它传递给init进程，如果参数中有<code>=</code>字符时，内核会将该参数传递给init进程作为其环境变量。</li>
+<li>模块可以通过两种方式传递参数：一个是命令行，一个是modprobe。
+
+<pre><code> (kernel command line) usbcore.blinkenlights=1
+ (modprobe command line) modprobe usbcore blinkenlights=1
+</code></pre></li>
+<li>编译进内核的模块，需要使用命令行的方式给其传递参数。</li>
+<li>modprobe在加载内核模块时，会去查找<code>/proc/cmdline</code>来收集模块的参数，所以未编译进内核的可加载的模块也可以使用命令行来传递参数。</li>
+<li>内核参数中，中划线<code>-</code>和下划线<code>_</code>时等价的，例如，如下的两个参数时等价的
+
+<pre><code> log_buf_len=1M print-fatal-signals=1
+ log-buf-len=1M print_fatal_signals=1
+</code></pre></li>
+<li>如果参数的值中有空格，可以使用双引号将其包住，例如：
+
+<pre><code> param="spaces in here"
+</code></pre></li>
+</ol>
+
+
+<h2>第一个阶段</h2>
+
+<h2>第二个阶段</h2>
+
+<h2>第三个阶段</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Sys Rq in linux kernel]]></title>
+    <link href="http://datawolf.github.com/blog/2015/03/21/sys-rq-in-linux-kernel/"/>
+    <updated>2015-03-21T16:57:00+08:00</updated>
+    <id>http://datawolf.github.com/blog/2015/03/21/sys-rq-in-linux-kernel</id>
+    <content type="html"><![CDATA[<p>曾几何时，笔者在使用ubuntu系统时，内核卡死，然后就束手无策了。只能去把电源来重启系统，但这是非常危险的，有可能会造成数据的丢失或者磁盘的损害。</p>
+
+<p>幸好，使用sysrq组合键可以让系统安全的进行重启，并能收集一些系统的信息，方便问题的定位。</p>
+
+<p>在终端上同时按Alt, SysRq和命令键则会执行SysRq命令, SysRq键就是"Print Screen"健. 比如Alt+SysRq+b则重启机器。ALT+SysRQ+X（此处X代表命令参数）这是一组“魔术组合键”，只要内核没有被完全锁住，不管内核在做什么事情，使用这些组合键能即时打印出内核的信息。</p>
+
+<p>使用sysrq组合键是了解系统目前运行情况的最佳方式。如果系统出现挂起（例如：死机等）的情况或在诊断一些和内核相关比较难解决的问题的时候，使用sysrq键是个比较好的方式。</p>
+
+<p>在有些系统中，默认SysRq组合键是关闭的。 打开这个功能，运行:</p>
+
+<pre><code># echo 1 &gt; /proc/sys/kernel/sysrq
+</code></pre>
+
+<p>关闭这个功能:</p>
+
+<pre><code># echo 0 &gt; /proc/sys/kernel/sysrq
+</code></pre>
+
+<p>如果想让此功能一直生效，在/etc/sysctl.conf里面设置kernel.sysrq的值为1. 重新启动以后，此功能将会自动打开。</p>
+
+<pre><code>kernel.sysrq = 1
+</code></pre>
+
+<p>因为打开sysrq键的功能以后，有终端访问权限的用户将会拥有一些特别的功能。因此，除非是要调试，解决问题，一般情况下，不要打开此功能。如果一定要打开，请确保你的终端访问的安全性。</p>
+
+<p>有几种方式能触发sysrq事件。在带有AT键盘的一般系统上，在终端上输入一下组合键:</p>
+
+<pre><code>Alt+PrintScreen+[CommandKey]
+</code></pre>
+
+<p>如果你在机器上有root权限，你能把commandkey字符写入到 <code>/proc/sysrq-trigger</code> 文件。这能帮助你通过脚本或你不在系统终端上的时候触发sysrq事件。</p>
+
+<pre><code># echo 'm' &gt; /proc/sysrq-trigger
+</code></pre>
+
+<p>哪些类型的sysrq事件能被触发？请参见文档：https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/sysrq.txt</p>
+
+<h2>下面具体介绍一些如何安全的重启卡死的linux系统</h2>
+
+<h4>使用 SysRq 重启计算机的方法：</h4>
+
+<p>台式机键盘或者全尺寸键盘： <code>Alt + SysRq + [R-E-I-S-U-B]</code></p>
+
+<p>部分笔记本键盘： <code>Fn + Alt + SysRq + [R-E-I-S-U-B]</code></p>
+
+<p>解释：括号内的英文字母需要依次顺序按下，而且每次按下字母后需要间隔 5-10s 再执行下一个动作。（如 <code>alter +SysRq + R</code>，间隔10s 后再按 alter+ SysRq +E，以此类推）切记不可快速按下 <code>R-E-I-S-U-B</code> ，否则后果和 扣电池拔电源线无异！</p>
+
+<h4>下面详细讲解一下各个序列：</h4>
+
+<ul>
+<li><code>unRaw</code> – 把键盘设置为 ASCII 模式，使按键可以穿透 x server 捕捉传递给内核</li>
+<li><code>tErminate</code> – 向除 init 外进程发送 SIGTERM 信号，让其自行结束</li>
+<li><code>kIll</code> - 向除 init 以外所有进程发送 SIGKILL 信号，强制结束进程</li>
+<li><code>Sync</code> – 同步缓冲区数据到硬盘，避免数据丢失</li>
+<li><code>Unmount</code> – 将所有已经挂载的文件系统 重新挂载为只读</li>
+<li><code>reBoot</code> - 立即重启计算机</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
